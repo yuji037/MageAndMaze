@@ -59,8 +59,13 @@ public class DungeonPartManager : MonoBehaviour {
         StartCoroutine(sceneTransitionManager.FadeIn());
 
         // 階の最初にイベント発生する際
-        eventSceneManager.SetEventDialog("EventText2");
-	}
+        int random = Random.Range(0, 100);
+        // 今は確率0％
+        if ( random < 0 )
+        {
+            eventSceneManager.EventStart("EventText2");
+        }
+    }
 
 	// Update is called once per frame
 	void Update () {

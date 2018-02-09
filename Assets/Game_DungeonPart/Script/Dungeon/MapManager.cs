@@ -206,7 +206,7 @@ public class MapManager : MonoBehaviour
         // 障害物はダメだが、プレイヤー・敵は居てもよい
         if ( chara_exist2D[(int)pos.z, (int)pos.x] != -1
             && chara_exist2D[(int)pos.z, (int)pos.x] >= 200
-            && chara_exist2D[(int)pos.z, (int)pos.x] < 500 ) return false;
+            && chara_exist2D[(int)pos.z, (int)pos.x] < 400 ) return false;
 
         if ( onground_exist2D[(int)pos.z, (int)pos.x] != -1 ) return false;
 
@@ -215,7 +215,9 @@ public class MapManager : MonoBehaviour
 
     public bool IsBreakableObstacle(Vector3 pos)
     {
-        return ( 200 <= chara_exist2D[(int)pos.z, (int)pos.x] && chara_exist2D[(int)pos.z, (int)pos.x] < 500 );
+        if ( !InsideMap(pos) ) return false;
+
+        return ( 200 <= chara_exist2D[(int)pos.z, (int)pos.x] && chara_exist2D[(int)pos.z, (int)pos.x] < 400 );
     }
 
     // ナナメの判定（たすき掛けの位置2か所がどちらか壁なら false）

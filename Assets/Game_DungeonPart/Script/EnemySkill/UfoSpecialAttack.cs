@@ -383,6 +383,7 @@ public class UfoSpecialAttack : NPCSkill
             targetChara.gameObject.transform.position = targetChara.pos + new Vector3(0, (0.5f - t) * 15, 0);
             yield return null;
         }
+        targetChara.gameObject.transform.position = targetChara.pos;
         parent.GetComponentInChildren<SESet>().PlaySE(SESet.Type.STONE_BREAK);
 
         // 敵自身の戻り
@@ -391,7 +392,7 @@ public class UfoSpecialAttack : NPCSkill
             thisChara.gameObject.transform.position = thisChara.pos + new Vector3(0, ( 0.5f - t ) * 15, 0);
             yield return null;
         }
-
+        thisChara.gameObject.transform.position = thisChara.pos;
         targetAnim.TriggerAnimator("Grabbed",false);
 
 

@@ -14,12 +14,15 @@ public class MoveCenterButtonManager : MonoBehaviour {
     GameObject moveButtonsParent;
     Vector3[] fixedDirection = new Vector3[8];
 
+    TurnManager turnMn;
+
 	// Use this for initialization
 	void Start () {
         parent = GameObject.Find("GameObjectParent");
         moveButtonsParent = parent.GetComponentInChildren<MoveButtonsParent>().gameObject;
         playerMove = parent.GetComponentInChildren<PlayerMove>();
         charaDirection = parent.GetComponentInChildren<CharaDirection_Player>().gameObject;
+        turnMn = parent.GetComponentInChildren<TurnManager>();
         charaDirection.SetActive(false);
         fixedDirection[0] = new Vector3(0, 1, 0);
         fixedDirection[1] = new Vector3(1, 1, 0);
@@ -38,7 +41,8 @@ public class MoveCenterButtonManager : MonoBehaviour {
     }
     public void DragStay()
     {
-        
+        if ( turnMn.PlayerActionSelected ) return;
+
         sPos = Input.mousePosition;
         for (int i = 0; i < 8; i++)
         {

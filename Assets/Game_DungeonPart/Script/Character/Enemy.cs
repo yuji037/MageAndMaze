@@ -12,7 +12,8 @@ public enum EnemyType
     GHOST,
     MAKEWALL,
     LIGHT,
-    BOSS1
+    NPC1,
+    BOSS1,
 }
 
 public class Enemy : BattleParticipant
@@ -124,6 +125,12 @@ public class Enemy : BattleParticipant
 
         // 死亡時行動不可
         //if (action == ActionType.DEAD) return;
+
+        if (type == EnemyType.NPC1 )
+        {
+            // NPCなら何もせず
+            return;
+        }
 
         // 特殊行動の判定
         bool specialAct = false;

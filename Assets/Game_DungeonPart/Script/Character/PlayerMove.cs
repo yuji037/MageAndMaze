@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMove : MonoBehaviour {
+public class PlayerMove : MonoBehaviour
+{
 
     GameObject parent;
     Player player;
@@ -11,7 +12,7 @@ public class PlayerMove : MonoBehaviour {
     public TurnManager turnMn;
     MoveButtonManager moveBtMn;
 
-    GameObject checkNextFloorWindow; 
+    GameObject checkNextFloorWindow;
 
     public int charaID = 0;
     public Vector3 moveVec;
@@ -19,9 +20,10 @@ public class PlayerMove : MonoBehaviour {
     bool init = false;
 
     UISwitch uiSwitch;
+    EventSceneManager eventSceneMn;
 
-	// Use this for initialization
-	void Start () {
+    private void Awake()
+    {
         parent = GameObject.Find("GameObjectParent");
         player = parent.GetComponentInChildren<Player>();
         mapMn = parent.GetComponentInChildren<MapManager>();
@@ -29,9 +31,15 @@ public class PlayerMove : MonoBehaviour {
         moveBtMn = parent.GetComponentInChildren<MoveButtonManager>();
         anim = GetComponent<AnimationChanger>();
         uiSwitch = parent.GetComponentInChildren<UISwitch>();
+        eventSceneMn = parent.GetComponentInChildren<EventSceneManager>();
+    }
 
+    // Use this for initialization
+    void Start()
+    {
         uiSwitch.SwitchSubUI((int)SubUIType.CHECK_NEXT_FLOOR, false);
-	}
+        uiSwitch.SwitchSubUI((int)SubUIType.INTERACT, false);
+    }
 
     private void Update()
     {
@@ -45,9 +53,10 @@ public class PlayerMove : MonoBehaviour {
     }
 
     // Update is called once per frame
-    public void MoveUpdate () {
+    public void MoveUpdate()
+    {
 
-        if(moveVec != Vector3.zero )
+        if ( moveVec != Vector3.zero )
         {
             Move();
         }
@@ -73,7 +82,7 @@ public class PlayerMove : MonoBehaviour {
     {
         actionRate += Time.deltaTime * turnMn.moveSpeed;
         //Debug.Log("Player actionRate : " + actionRate);
-        if(actionRate >= 1 )
+        if ( actionRate >= 1 )
         {
             // 移動終了
             transform.position = player.pos + moveVec;
@@ -97,7 +106,7 @@ public class PlayerMove : MonoBehaviour {
     {
         if ( turnMn.PlayerActionSelected ) return true;
 
-        if ( player.abnoState.invincibleTurn > 0) return false;
+        if ( player.abnoState.invincibleTurn > 0 ) return false;
 
         // 選択方向を向く
         player.charaDir = dir;
@@ -107,7 +116,7 @@ public class PlayerMove : MonoBehaviour {
         if ( !mapMn.InsideMap(player.pos + dir) ) return false;
 
         // 移動可能な空間かどうか
-        if (!mapMn.CanMoveCheck(player.pos, player.pos + dir)) return false;
+        if ( !mapMn.CanMoveCheck(player.pos, player.pos + dir) ) return false;
 
         moveBtMn._isActive = false;
         player.sPos = player.pos + dir;
@@ -128,7 +137,7 @@ public class PlayerMove : MonoBehaviour {
 
     public void SetCharaDir(Vector3 dir)
     {
-        if (moveVec != Vector3.zero) return; // 移動中は向きを変えない
+        if ( moveVec != Vector3.zero ) return; // 移動中は向きを変えない
         player.charaDir = dir;
         player.SetObjectDir();
     }
@@ -152,5 +161,25 @@ public class PlayerMove : MonoBehaviour {
         {
             player.HealByPercent(0.1f);
         }
+
+        // 周囲にNPCがいないかチェック
+        uiSwitch.SwitchSubUI((int)SubUIType.INTERACT, false);
+
+        if ( eventSceneMn.IsThisEventFinished("EventTextNPC1") ) return;
+
+        for ( int z = (int)player.pos.z - 1; z <= (int)player.pos.z + 1; z++ )
+        {
+            for ( int x = (int)player.pos.x - 1; x <= (int)player.pos.x + 1; x++ )
+            {
+                Vector3 checkPos = new Vector3(x, 0, z);
+                if ( !mapMn.InsideMap(checkPos) ) continue;
+                if ( 400 <= mapMn.chara_exist2D[z, x] && mapMn.chara_exist2D[z, x] < 500 )
+                {
+                    uiSwitch.SwitchSubUI((int)SubUIType.INTERACT, true);
+                    return;
+                }
+            }
+        }
+
     }
 }

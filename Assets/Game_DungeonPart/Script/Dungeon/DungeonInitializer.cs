@@ -58,7 +58,17 @@ public class DungeonInitializer : MonoBehaviour {
         }
         else
         {
-            EnemyStartPosDecide();
+            while ( eneCount <= enemyCount )
+            {
+                EnemySet();
+            }
+            // 確率を満たせばNPC1が出現
+            int random = Random.Range(0, 100);
+            if ( random < 100 )
+            {
+                EnemySet(EnemyType.NPC1);
+            }
+            DebugMessage.UpdateText();
             // MapManagerにその情報を渡す
             mapMn.SetCharaAndObjectInfo(chara_exist2D, onground_exist2D);
         }
@@ -114,44 +124,43 @@ public class DungeonInitializer : MonoBehaviour {
         
     }
 
-    void EnemyStartPosDecide()
+    void EnemySet(EnemyType fixedType = (EnemyType)(-1))
     {
-        while (eneCount <= enemyCount)
+        float sqrPlayerCloseRange = 0;
+        Vector3 pos = Vector3.zero;
+        // 固定位置に出現する敵かどうか（ボスなど）
+        bool isFixedEnemy = false;
+
+        // プレイヤーに近い敵が一定数以上にならないよう難易度調整
+        do
         {
-            float sqrPlayerCloseRange = 0;
-            Vector3 pos = Vector3.zero;
-            // 固定位置に出現する敵かどうか（ボスなど）
-            bool isFixedEnemy = false;
+            isFixedEnemy = ( eneCount == 1 && fixedEnemyPos.x != -1 );
 
-            // プレイヤーに近い敵が一定数以上にならないよう難易度調整
-            do
+            if ( isFixedEnemy )
             {
-                isFixedEnemy = ( eneCount == 1 && fixedEnemyPos.x != -1 );
-
-                if ( isFixedEnemy )
-                {
-                    pos = fixedEnemyPos;
-                }
-                else pos = GetRandomPos();
-                if (pos.x == -1 )
-                {
-                    // マップ範囲外なので生成不可、これ以上の生成をしない
-                    eneCount = enemyCount + 1;
-                    Debug.Log("敵生成：マップに許容範囲が少なく、これ以上生成できません。");
-                    break;
-                }
-                sqrPlayerCloseRange = ( pos - player.transform.position ).sqrMagnitude;
-            } while ( !isFixedEnemy && eneCount <= playerCloseEnemyMax && sqrPlayerCloseRange < closeRangeMin * closeRangeMin );
+                pos = fixedEnemyPos;
+            }
+            else pos = GetRandomPos();
+            if ( pos.x == -1 )
+            {
+                // マップ範囲外なので生成不可、これ以上の生成をしない
+                eneCount = enemyCount + 1;
+                Debug.Log("敵生成：マップに許容範囲が少なく、これ以上生成できません。");
+                break;
+            }
+            sqrPlayerCloseRange = ( pos - player.transform.position ).sqrMagnitude;
+        } while ( !isFixedEnemy && eneCount <= playerCloseEnemyMax && sqrPlayerCloseRange < closeRangeMin * closeRangeMin );
 
 
-            enemyMn.EnemyAdd(pos, isFixedEnemy);
+        var ene = enemyMn.EnemyAdd(pos, isFixedEnemy, fixedType);
+        if ( (int)fixedType != -1 && ene) ene.type = fixedType;
+        // NPCモンスターはIDは400～
+        if ( fixedType == EnemyType.NPC1 ) ene.idNum -= 100;
 
-            // キャラの位置を配列に入れて予約（他とかぶらないようにする）
-            chara_exist2D[(int)pos.z, (int)pos.x] = eneCount + 500;
+        // キャラの位置を配列に入れて予約（他とかぶらないようにする）
+        chara_exist2D[(int)pos.z, (int)pos.x] = ene.idNum;
 
-            eneCount++;
-        }
-        DebugMessage.UpdateText();
+        eneCount++;
     }
 
     public Vector3 StairsPosDecide()

@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class InactiveFarFromPlayer : MonoBehaviour {
 
-    [SerializeField] float distanceInvisible = 10;
+    public float distanceInvisible = 10;
 
     GameObject parent;
+    InactiveFarManager inactiveFarMn;
     GameObject player;
     GameObject[] gameObjectList;
     bool isActive = true;
@@ -14,6 +15,8 @@ public class InactiveFarFromPlayer : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         parent = GameObject.Find("GameObjectParent");
+        inactiveFarMn = parent.GetComponentInChildren<InactiveFarManager>();
+        inactiveFarMn.objects.Add(this);
         player = parent.GetComponentInChildren<Player>().gameObject;
 
         Body[] bodys = GetComponentsInChildren<Body>();
@@ -27,13 +30,14 @@ public class InactiveFarFromPlayer : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	public void UpdateInactivate () {
         float distanceSqrMag = ( transform.position - player.transform.position ).sqrMagnitude;
 
         // プレイヤーから一定距離遠かったら非表示
-        if (isActive != (distanceSqrMag < distanceInvisible * distanceInvisible ) )
+        bool isClose = ( distanceSqrMag < distanceInvisible * distanceInvisible );
+        if (isActive != isClose )
         {
-            isActive = ( distanceSqrMag < distanceInvisible * distanceInvisible );
+            isActive = isClose;
             foreach(GameObject obj in gameObjectList )
             {
                 obj.SetActive(isActive);

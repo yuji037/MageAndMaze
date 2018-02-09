@@ -150,9 +150,9 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    public void EnemyAdd(Vector3 posi, bool isFixedEnemy = false)
+    public Enemy EnemyAdd(Vector3 posi, bool isFixedEnemy = false, EnemyType fixedType = (EnemyType)(-1))
     {
-        if ( posi.x < 0 ) return;
+        if ( posi.x < 0 ) return null;
         if ( spawnTable == null )
         {
             SetSpawnTable();
@@ -173,6 +173,10 @@ public class EnemyManager : MonoBehaviour
         {
             newEnemyObj = Instantiate(enemyPrefab[8], characterParent.transform);
             Debug.Log("ボス選択");
+        }
+        else if( fixedType != (EnemyType)( -1 ) )
+        {
+            newEnemyObj = Instantiate(enemyPrefab[(int)fixedType], characterParent.transform);
         }
         else if ( testMode )
         {
@@ -203,7 +207,7 @@ public class EnemyManager : MonoBehaviour
             else
             {
                 Debug.Log("敵種選択エラー");
-                return;
+                return null;
             }
         }
         Enemy newEne = newEnemyObj.GetComponent<Enemy>();
@@ -213,6 +217,8 @@ public class EnemyManager : MonoBehaviour
         newEne.Init();
 
         if (!isFixedEnemy) SetStrength(newEne);
+
+        return newEne;
     }
 
     Dictionary<int, int[]> strengthTable = null;
@@ -419,7 +425,8 @@ public class EnemyManager : MonoBehaviour
 
             Enemy newEne = newEnemyObj.GetComponent<Enemy>();
             SetStrength(newEne);
-            newEne.SetStartParam(enemyID, data.pos);
+            int ID = enemyID - (( type == EnemyType.NPC1 ) ? 100 : 0);
+            newEne.SetStartParam(ID, data.pos);
             newEne.Init();
             // HPなど代入
             data.Load(newEne);

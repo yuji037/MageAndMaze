@@ -47,6 +47,10 @@ public class EventSceneManager : MonoBehaviour {
     EnemyManager eneMn;
     PlayerItem playerItem;
 
+    // 発生したイベントファイル名を覚えておいて
+    // 同フロアで二度同じイベントは起きないようにする
+    List<string> fileNames = new List<string>();
+
     // Use this for initialization
     void Start () {
 
@@ -70,12 +74,26 @@ public class EventSceneManager : MonoBehaviour {
 
     }
 
+    public bool IsThisEventFinished(string _fileName)
+    {
+        foreach(string name in fileNames )
+        {
+            if (_fileName == name )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // どの会話イベントが発生するかをどう受け取るか？
     // ファイル名（文字列）または enum EventType
     // ↓イベント開始したい時呼ぶ
-    public void SetEventDialog(string _fileName)
+    public void EventStart(string _fileName)
     {
         if ( !parent ) Start();
+
+        fileNames.Add(_fileName);
 
         uiSwitch.SwitchUI((int)DungUIType.EVENT);
         chooseButtons.SetActive(false);
@@ -98,7 +116,7 @@ public class EventSceneManager : MonoBehaviour {
     {
         chooseButtons.SetActive(false);
         // 選択された方のcsvファイル（会話）を読み込む
-        SetEventDialog(chooseEventText[num]);
+        EventStart(chooseEventText[num]);
     }
 
     // 次の行に進む処理

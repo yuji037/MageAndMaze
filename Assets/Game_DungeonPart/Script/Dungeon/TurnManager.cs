@@ -26,6 +26,7 @@ public class TurnManager : MonoBehaviour {
     UIMiniMap miniMap;
     ObstacleManager obsMn;
     OnGroundObjectManager ogoMn;
+    InactiveFarManager inactiveFarMn;
 
     [SerializeField]
     bool outDebugLog = false;
@@ -40,6 +41,7 @@ public class TurnManager : MonoBehaviour {
         mapMn = parent.GetComponentInChildren<MapManager>();
         obsMn = parent.GetComponentInChildren<ObstacleManager>();
         ogoMn = parent.GetComponentInChildren<OnGroundObjectManager>();
+        inactiveFarMn = parent.GetComponentInChildren<InactiveFarManager>();
         turnTable = new List<ActionData>();
     }
 
@@ -179,7 +181,9 @@ public class TurnManager : MonoBehaviour {
                 DebugMessage.UpdateText();
             }
 
-            if ( allActFinish )
+            // 全ターン終了処理
+            // プレイヤーが死んでいればセーブしない
+            if ( player.HP > 0 && allActFinish )
             {
                 allActFinish = false;
                 Debug.Log("全ターン終了");
@@ -198,6 +202,7 @@ public class TurnManager : MonoBehaviour {
                 eneMn.SpawnCounterPlus();
 
                 miniMap.MiniMapUpdate();
+                inactiveFarMn.UpdateInactivateObjects();
 
                 // セーブ
                 player.SavePlayerInfo();

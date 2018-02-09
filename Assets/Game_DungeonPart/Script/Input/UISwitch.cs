@@ -5,6 +5,7 @@ using UnityEngine;
 public enum SubUIType
 {
     CHECK_NEXT_FLOOR,
+    INTERACT,
     SubUITypeMax
 }
 
@@ -57,4 +58,6 @@ public class UISwitch : MonoBehaviour {
     {
         subUIs[type].SetActive(on);
     }
+
+
 }
