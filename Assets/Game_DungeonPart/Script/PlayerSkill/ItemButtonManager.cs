@@ -19,13 +19,13 @@ public class ItemButtonManager : MonoBehaviour
     private GameObject AttributeTraningPanel;
     private Player player;
     private const int maxSyouhiItem = 3;
+    private enum AttributTraning { RED = 5, YELLOW = 5, BLUE = 5 };
     private GameObject[] syouhiItemsImg = new GameObject[maxSyouhiItem];
     private List<GameObject> createItemsButton = new List<GameObject>();
     private List<int> canCreateItemsId = new List<int>();
     private int traningStoneColor;
     //0~11のパネルの番号-1は未選択
     private int selectPanelNum = -1;
-    int[] useItemSyuren=new int[3];
     bool inited = false;
     private void Start()
     {
@@ -41,9 +41,6 @@ public class ItemButtonManager : MonoBehaviour
         }
         selectedPanel();
         setCreateItems();
-        useItemSyuren[(int)PlayerItem.stone.RED_STONE] = 5;
-        useItemSyuren[(int)PlayerItem.stone.YELLOW_STONE] = 5;
-        useItemSyuren[(int)PlayerItem.stone.BLUE_STONE] = 5;
         syouhiItemsImg[0].GetComponent<Image>().sprite = items[0].itemImage;
         syouhiItemsImg[1].GetComponent<Image>().sprite = items[1].itemImage;
         syouhiItemsImg[2].GetComponent<Image>().sprite = items[2].itemImage;
@@ -130,7 +127,7 @@ public class ItemButtonManager : MonoBehaviour
         }
         Dictionary<int, int> useStones = new Dictionary<int, int>();
         traningStoneColor = stone_color;
-        useStones[stone_color] = useItemSyuren[traningStoneColor];
+        useStones[stone_color] = 5;
         useItemReload(useStones);
         blockkingPanel.SetActive(true);
         setumeiPanel.SetActive(false);
@@ -141,13 +138,11 @@ public class ItemButtonManager : MonoBehaviour
 
         if (items[traningStoneColor] != null)
         {
-            items[traningStoneColor].kosuu -= useItemSyuren[traningStoneColor];
-            if (items[traningStoneColor].kosuu < useItemSyuren[traningStoneColor]) eleLvUpCheckPanel.SetActive(false);
+            items[traningStoneColor].kosuu -= 5;
+            if (items[traningStoneColor].kosuu < 5) eleLvUpCheckPanel.SetActive(false);
         }
         player.ElementLevelUp(traningStoneColor + 1);
-        Dictionary<int, int> useStones = new Dictionary<int, int>();
-        useStones[(int)traningStoneColor] = useItemSyuren[traningStoneColor];
-        useItemReload((items[traningStoneColor].kosuu >= useItemSyuren[traningStoneColor])?useStones:null);
+        useItemReload();
         setCreateItems();
         lvUpCheckReload();
     }
@@ -184,7 +179,7 @@ public class ItemButtonManager : MonoBehaviour
                     break;
             }
 
-            if (useItemSyuren[s] <= items[s].kosuu)
+            if (5 <= items[s].kosuu)
             {
                 AttributeTraningPanel.transform.Find("" + s).GetComponent<Button>().interactable = true;
               
