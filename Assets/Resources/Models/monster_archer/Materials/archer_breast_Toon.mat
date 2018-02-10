@@ -59,7 +59,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ToonShade:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 8900000, guid: 2e8bf26a240921a428295a7e7beb0cd7, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -81,6 +81,6 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.63235295, g: 0.63235295, b: 0.63235295, a: 1}
+    - _Color: {r: 0.8161765, g: 0.8161765, b: 0.8161765, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutlineColor: {r: 0.5808823, g: 0, b: 0, a: 1}

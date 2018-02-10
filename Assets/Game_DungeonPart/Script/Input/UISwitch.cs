@@ -22,6 +22,8 @@ public class UISwitch : MonoBehaviour {
     [SerializeField]
     GameObject uiMenuButtons;
 
+    public bool Interactable = true;
+
 	// Use this for initialization
 	void Start () {
         for ( int t = 0; t < uis.Length; t++ )
@@ -37,6 +39,8 @@ public class UISwitch : MonoBehaviour {
 	
     public void SwitchUI(int type)
     {
+        if ( !Interactable ) return;
+
         // type に合致するものだけアクティブ化
         for (int t = 0; t < (int)DungUIType.DungUITypeMax; t++)
         {

@@ -18,10 +18,13 @@ public class PlayCharaSwitch : MonoBehaviour {
     [SerializeField]
     float switchCharaTime = 1;
 
+    UISwitch uiSwitch;
+
     private void Start()
     {
         parent = GameObject.Find("GameObjectParent");
         player = parent.GetComponentInChildren<Player>();
+        uiSwitch = parent.GetComponentInChildren<UISwitch>();
     }
 
     Coroutine playerSwitchCoroutine = null;
@@ -35,13 +38,16 @@ public class PlayCharaSwitch : MonoBehaviour {
 
     IEnumerator PlayerSwitchCoroutine()
     {
+        uiSwitch.Interactable = false;
+
         switchEffect.SetActive(true);
         yield return new WaitForSeconds(switchCharaTime);
         isAngel = !isAngel;
         ChangeChara(isAngel);
         yield return new WaitForSeconds(3 - switchCharaTime);
-        switchEffect.SetActive(false);
         playerSwitchCoroutine = null;
+
+        uiSwitch.Interactable = true;
     }
 
     public void ChangeChara(bool _isAngel)

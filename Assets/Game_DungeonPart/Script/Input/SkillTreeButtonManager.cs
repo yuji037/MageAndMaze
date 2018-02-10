@@ -27,7 +27,7 @@ public class SkillTreeButtonManager : MonoBehaviour
     [SerializeField]
     private GameObject SkillTreeCanvas;
 
-    private bool deleteMode=false;
+    private bool deleteMode = false;
     public GameObject SetumeiPanel;
 
     private GameObject[] SyadanPanel;
@@ -48,7 +48,7 @@ public class SkillTreeButtonManager : MonoBehaviour
         GameObject[] TreeBacks = new GameObject[TREE_SUU];
         SyadanPanel = new GameObject[TREE_SUU];
 
-        for (int i = 0; i < TREE_SUU; i++)
+        for ( int i = 0; i < TREE_SUU; i++ )
         {
             TreeBacks[i] = ScrollPanel.transform.Find("" + i).gameObject;
             SyadanPanel[i] = TreeBacks[i].transform.Find("Syadan").gameObject;
@@ -94,15 +94,15 @@ public class SkillTreeButtonManager : MonoBehaviour
         }
         };
         //スクロールパネルにツリーを配置
-        for (int i = 0; i < TREE_SUU; i++)
+        for ( int i = 0; i < TREE_SUU; i++ )
         {
             SkillTreeUICreate(TreeBacks[i], TreeHaiti[i]);
-            TreeBacks[i].transform.localPosition = new Vector3(i * (TreeBacks[i].GetComponent<RectTransform>().sizeDelta.x + 60) + 30, 0);
+            TreeBacks[i].transform.localPosition = new Vector3(i * ( TreeBacks[i].GetComponent<RectTransform>().sizeDelta.x + 60 ) + 30, 0);
         }
         //TreeBacks[RED].GetComponent<Image>().color = Color.red;
         //TreeBacks[YELLOW].GetComponent<Image>().color = Color.yellow;
         //TreeBacks[BLUE].GetComponent<Image>().color = Color.blue;
-        for (int i = 0; i < SET_SUU; i++)
+        for ( int i = 0; i < SET_SUU; i++ )
         {
             regSkillButton[i] = registPanel.transform.Find("" + i).gameObject;
         }
@@ -119,14 +119,17 @@ public class SkillTreeButtonManager : MonoBehaviour
     }
     private void Init()
     {
-        for (int i = 0; i < SET_SUU; i++)
+        selectSkill = NONE;
+        SetumeiPanel.SetActive(false);
+        selectImage.SetActive(false);
+        for ( int i = 0; i < SET_SUU; i++ )
         {
             regSkillButton[i].transform.Find("SelectImage").gameObject.SetActive(false);
         }
     }
     private void OnEnable()
     {
-        if (stated)
+        if ( stated )
         {
             Init();
             syutokuKousin();
@@ -138,22 +141,22 @@ public class SkillTreeButtonManager : MonoBehaviour
         float width = treeBack.GetComponent<RectTransform>().sizeDelta.x;
         float height = treeBack.GetComponent<RectTransform>().sizeDelta.y;
         float offset = SkillButtonPre.GetComponent<RectTransform>().sizeDelta.x / 2 + 10;
-        float masukanW = (width - offset * 2) / (TREE_WID - 1);
-        float masukanH = (height - offset * 2) / (TREE_HEI - 1);
+        float masukanW = ( width - offset * 2 ) / ( TREE_WID - 1 );
+        float masukanH = ( height - offset * 2 ) / ( TREE_HEI - 1 );
         Dictionary<int, GameObject> Buttons = new Dictionary<int, GameObject>();
-        for (int h = 0; h < TREE_HEI; h++)
+        for ( int h = 0; h < TREE_HEI; h++ )
         {
-            for (int w = 0; w < TREE_WID; w++)
+            for ( int w = 0; w < TREE_WID; w++ )
             {
                 int num = haitidata[h, w];
-                if (num > 0)
+                if ( num > 0 )
                 {
                     skillButtons[num] = Instantiate(SkillButtonPre, treeBack.transform);
                     Buttons[num] = skillButtons[num];
-                    Buttons[num].transform.localPosition = new Vector3(offset + (w) * masukanW, -offset + (h) * -masukanH);
+                    Buttons[num].transform.localPosition = new Vector3(offset + ( w ) * masukanW, -offset + ( h ) * -masukanH);
                     Buttons[num].GetComponent<SkillButton>().init(num);
                     Buttons[num].GetComponentInChildren<Text>().text += num;
-                    if (pst.Skills[num].skillImage != null) Buttons[num].transform.Find("skillImage").GetComponent<Image>().sprite = pst.Skills[num].skillImage;
+                    if ( pst.Skills[num].skillImage != null ) Buttons[num].transform.Find("skillImage").GetComponent<Image>().sprite = pst.Skills[num].skillImage;
                     else Buttons[num].transform.Find("skillImage").GetComponent<Image>().color = new Color(1, 1, 1, 0);
 
                     Buttons[num].GetComponent<Button>().onClick.AddListener(() => skillButtonClick(num));
@@ -161,13 +164,13 @@ public class SkillTreeButtonManager : MonoBehaviour
             }
         }
         //前提スキルボタンに対して枝を伸ばす。
-        foreach (GameObject i in Buttons.Values)
+        foreach ( GameObject i in Buttons.Values )
         {
-            if (null == pst.Skills[i.GetComponent<SkillButton>().skillnum].ZenteiSkillId) break;
-            foreach (int k in pst.Skills[i.GetComponent<SkillButton>().skillnum].ZenteiSkillId)
+            if ( null == pst.Skills[i.GetComponent<SkillButton>().skillnum].ZenteiSkillId ) break;
+            foreach ( int k in pst.Skills[i.GetComponent<SkillButton>().skillnum].ZenteiSkillId )
             {
                 var dis = Vector3.Distance(Buttons[k].transform.localPosition, i.transform.localPosition);
-                var diff = (Buttons[k].transform.position - i.transform.position).normalized;
+                var diff = ( Buttons[k].transform.position - i.transform.position ).normalized;
                 var br = Instantiate(BranchPre, i.transform.position, Quaternion.FromToRotation(Vector3.up, diff), treeBack.transform);
                 br.GetComponent<RectTransform>().sizeDelta = new Vector2(20, dis);
                 br.transform.SetAsFirstSibling();
@@ -180,10 +183,10 @@ public class SkillTreeButtonManager : MonoBehaviour
     //登録しているスキルのアイコンを、setskillsを参照して一括更新
     void RegiButKousin()
     {
-        for (int i = 0; i < SET_SUU; i++)
+        for ( int i = 0; i < SET_SUU; i++ )
         {
             //セットされていたら
-            if (pst.SetSkills[i] != NONE)
+            if ( pst.SetSkills[i] != NONE )
             {
                 var iconimg = regSkillButton[i].transform.Find("skillImage").GetComponent<Image>();
                 iconimg.enabled = true;
@@ -272,11 +275,11 @@ public class SkillTreeButtonManager : MonoBehaviour
     //syadaneventが押されたらsyadanpanelを非アクティブに
     public void Syadan()
     {
-        foreach (var i in SyadanPanel)
+        foreach ( var i in SyadanPanel )
         {
             i.SetActive(false);
         }
-        foreach (var i in regSkillButton)
+        foreach ( var i in regSkillButton )
         {
             i.transform.Find("SelectImage").gameObject.SetActive(false);
         }
@@ -289,12 +292,50 @@ public class SkillTreeButtonManager : MonoBehaviour
         selectSkill = num;
         selectImage.SetActive(true);
         SetumeiPanel.SetActive(true);
-        RectTransform but_rect = skillButtons[num].GetComponent<RectTransform>();
-        int trans_x = 1, trans_y = 1;
-        trans_x = ( GetComponent<RectTransform>().position.x > but_rect.position.x ) ? 1 : -1;
-        trans_y = ( GetComponent<RectTransform>().position.y > but_rect.position.y ) ? 1 : -1;
-        var setumei_rect = SetumeiPanel.GetComponent<RectTransform>();
-        setumei_rect.position = but_rect.position + new Vector3(setumei_rect.sizeDelta.x * setumei_rect.lossyScale.x * 0.6f * trans_x, setumei_rect.sizeDelta.y * setumei_rect.lossyScale.y * 0.5f * trans_y);
+        var but_rect = skillButtons[num].GetComponent<RectTransform>();
+
+        // var this_rect = GetComponent<RectTransform>();
+        var view_rect = transform.Find("kariPanel").GetComponent<RectTransform>();
+        Vector3 tp = view_rect.InverseTransformPoint(but_rect.position);
+        //Debug.Log(but_rect.position);
+        //Debug.Log(tp);
+        var wide_size = view_rect.rect.width;
+        var height_size = view_rect.rect.height;
+        var pop_rect = SetumeiPanel.GetComponent<RectTransform>();
+        Vector3 popPos = but_rect.position;
+        //横計算
+        if ( tp.x < wide_size * 0.4f )
+        {
+            popPos.x += pop_rect.sizeDelta.x * pop_rect.lossyScale.x * 0.6f * 1;
+        }
+        if ( tp.x < wide_size * 0.6f )
+        {
+
+        }
+        else if ( tp.x < wide_size * 1.0f )
+        {
+            popPos.x += pop_rect.sizeDelta.x * pop_rect.lossyScale.x * 0.6f * -1;
+        }
+        //縦計算
+        if ( tp.y < height_size * 0.4f )
+        {
+            popPos.y += pop_rect.sizeDelta.y * pop_rect.lossyScale.y * 0.5f * 1;
+        }
+        if ( tp.y < height_size * 0.6f )
+        {
+        }
+        else if ( tp.y < height_size * 1.0f )
+        {
+            popPos.y += pop_rect.sizeDelta.y * pop_rect.lossyScale.y * 0.5f * -1;
+        }
+        Debug.Log(but_rect.position);
+        Debug.Log(tp);
+        Debug.Log("wide=" + wide_size);
+        Debug.Log("height=" + height_size);
+        //trans_x = (GetComponent<RectTransform>().position.x > but_rect.position.x) ? 1 : -1;
+        //trans_y = (GetComponent<RectTransform>().position.y > but_rect.position.y) ? 1 : -1;
+
+        pop_rect.position = popPos;
         SetumeiPanel.transform.Find("SkillNameText").GetComponent<Text>().text = pst.Skills[num].SkillName;
         SetumeiPanel.transform.Find("SkillSetumei").GetComponent<Text>().text = pst.Skills[num].skillDescription;
         SetumeiPanel.transform.Find("SkillImage").GetComponent<Image>().sprite = pst.Skills[num].skillImage;
@@ -325,16 +366,16 @@ public class SkillTreeButtonManager : MonoBehaviour
 
         bool canSyutoku = true;
         //習得できるか判定
-        for (int i = 0; i < TREE_SUU; i++)
+        for ( int i = 0; i < TREE_SUU; i++ )
         {
-            if (pst.GetComponent<PlayerItem>().items[i].kosuu < pst.Skills[selectSkill].UseSoul[i])
+            if ( pst.GetComponent<PlayerItem>().items[i].kosuu < pst.Skills[selectSkill].UseSoul[i] )
             {
                 canSyutoku = false;
             }
         }
-        if (canSyutoku)
+        if ( canSyutoku )
         {
-            for (int i = 0; i < TREE_SUU; i++)
+            for ( int i = 0; i < TREE_SUU; i++ )
             {
                 pst.GetComponent<PlayerItem>().items[i].kosuu -= pst.Skills[selectSkill].UseSoul[i];
             }
@@ -343,11 +384,11 @@ public class SkillTreeButtonManager : MonoBehaviour
             syutokuKousin();
         }
     }
-   
+
     public void KaijoClick()
     {
         deleteMode = true;
-        for (int i = 0; i < SET_SUU; i++)
+        for ( int i = 0; i < SET_SUU; i++ )
         {
             var r = regSkillButton[i].transform.Find("SelectImage").gameObject;
             r.SetActive(pst.SetSkills[i] != NONE);
