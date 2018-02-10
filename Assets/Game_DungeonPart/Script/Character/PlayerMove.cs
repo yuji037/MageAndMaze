@@ -122,6 +122,7 @@ public class PlayerMove : MonoBehaviour
         player.sPos = player.pos + dir;
         mapMn.SetCharaExistInfo(player.pos);
         mapMn.SetCharaExistInfo(player.sPos, charaID, true);
+        Debug.Log(player.sPos + "にプレイヤー移動選択");
 
         // プレイヤーの移動すべきベクトルを設定
         moveVec = dir;

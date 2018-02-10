@@ -13,6 +13,10 @@ public class PlayCharaSwitch : MonoBehaviour {
     Player player;
 
     public bool isAngel = false;
+    [SerializeField]
+    GameObject switchEffect;
+    [SerializeField]
+    float switchCharaTime = 1;
 
     private void Start()
     {
@@ -20,11 +24,24 @@ public class PlayCharaSwitch : MonoBehaviour {
         player = parent.GetComponentInChildren<Player>();
     }
 
+    Coroutine playerSwitchCoroutine = null;
     public void SwitchChara()
     {
-        isAngel = !isAngel;
+        // 切り替えアニメーション中はボタン入力を受け付けない
+        if ( playerSwitchCoroutine != null) return;
 
+        playerSwitchCoroutine = StartCoroutine(PlayerSwitchCoroutine());
+    }
+
+    IEnumerator PlayerSwitchCoroutine()
+    {
+        switchEffect.SetActive(true);
+        yield return new WaitForSeconds(switchCharaTime);
+        isAngel = !isAngel;
         ChangeChara(isAngel);
+        yield return new WaitForSeconds(3 - switchCharaTime);
+        switchEffect.SetActive(false);
+        playerSwitchCoroutine = null;
     }
 
     public void ChangeChara(bool _isAngel)

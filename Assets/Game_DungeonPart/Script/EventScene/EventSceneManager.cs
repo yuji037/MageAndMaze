@@ -53,7 +53,7 @@ public class EventSceneManager : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-
+        
         if ( parent ) return;
         parent = GameObject.Find("GameObjectParent");
         uiSwitch = parent.GetComponentInChildren<UISwitch>();
@@ -100,6 +100,7 @@ public class EventSceneManager : MonoBehaviour {
 
         dialog = Resources.Load<TextAsset>("Dialog/" + _fileName) as TextAsset;
         reader = new StringReader(dialog.text);
+        
         // 最初の行は列の説明なので飛ばす
         reader.ReadLine();
 
@@ -145,7 +146,7 @@ public class EventSceneManager : MonoBehaviour {
         char[] delimiterChars = { ',' };
 
         string str = reader.ReadLine();
-        //Debug.Log(str);
+        Debug.Log(str);
         string[] words = str.Split(delimiterChars);
 
         if ( words.Length < 4 ) return -1;
@@ -155,7 +156,7 @@ public class EventSceneManager : MonoBehaviour {
         PictureChange(0, (ImageType)picNum);
         int.TryParse(words[2], out picNum);
         PictureChange(1, (ImageType)picNum);
-        eventText.text = words[3];
+        SetEventText(words[3]);
 
         if ( words.Length == 4 ) return 0;
 
@@ -186,6 +187,21 @@ public class EventSceneManager : MonoBehaviour {
 
         }
         return 0;
+    }
+
+    void SetEventText(string str)
+    {
+        // 会話文の中の改行は 'B' で判別
+        char[] delimiterChars = { 'B' };
+        string[] words = str.Split(delimiterChars);
+        string txt = "";
+        foreach(string word in words )
+        {
+            txt += word;
+            txt += "\n";
+        }
+
+        eventText.text = txt;
     }
 
     void CauseEffectiveEvent(int eventNum)

@@ -17,6 +17,7 @@ public class DungeonPartManager : MonoBehaviour {
     UISwitch ui;
     SceneTransitionManager sceneTransitionManager;
     EventSceneManager eventSceneManager;
+    SESet seSet;
 
     private void Awake()
     {
@@ -42,6 +43,7 @@ public class DungeonPartManager : MonoBehaviour {
         moveButtonManager = parent.GetComponentInChildren<MoveButtonManager>();
         sceneTransitionManager = parent.GetComponentInChildren<SceneTransitionManager>();
         eventSceneManager = parent.GetComponentInChildren<EventSceneManager>();
+        seSet = parent.GetComponentInChildren<SESet>();
 
         mapManager.d_initializer = dungeonInitializer;
         mapManager.DungeonGenerate();
@@ -78,6 +80,7 @@ public class DungeonPartManager : MonoBehaviour {
 
     IEnumerator NextFloorCoroutine()
     {
+        seSet.PlaySE(SESet.Type.STAIRS_DOWN);
         yield return StartCoroutine(sceneTransitionManager.FadeOut());
 
         if ( floor == 30 )

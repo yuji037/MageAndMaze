@@ -7,6 +7,7 @@ public class UfoSpecialAttack : NPCSkill
     private BattleParticipant targetChara = null;
     [SerializeField]
     GameObject[] effects;
+    InactiveFarManager inactiveFarMn;
 
     public void FindLightMonster()
     {
@@ -303,8 +304,9 @@ public class UfoSpecialAttack : NPCSkill
             thisChara.SetObjectDir();
 
             // プレイヤーの情報変え
+            mapMn.SetCharaExistInfo(targetChara.sPos);
+            Debug.Log(targetChara.sPos + "からプレイヤーを移動させます");
             targetChara.sPos = new Vector3(pointX, 0, pointZ);
-            mapMn.SetCharaExistInfo(targetChara.pos);
             //mapMn.SetCharaExistInfo
             mapMn.SetCharaExistInfo(targetChara.sPos, targetChara.idNum, true);
             Debug.Log("ターゲットワープ位置 " + targetChara.sPos);
@@ -343,7 +345,7 @@ public class UfoSpecialAttack : NPCSkill
 
         yield return new WaitForSeconds(0.8f);
 
-        // 上昇開始
+        // ターゲットを持ち上げ、上昇
         for ( float t = 0; t < 0.5f; t += Time.deltaTime )
         {
             var tarPos = targetChara.transform.position;
@@ -354,10 +356,10 @@ public class UfoSpecialAttack : NPCSkill
             yield return null;
         }
         
-        // アニメーションやオブジェクトの位置など、見た目の処理
+        // 瞬時にワープ
         targetChara.pos = targetChara.sPos;
         targetChara.gameObject.transform.position = targetChara.sPos;
-        Debug.Log("位置書き換え");
+        //Debug.Log("位置書き換え");
 
         thisChara.pos = thisChara.sPos;
         thisChara.gameObject.transform.position = thisChara.sPos;
@@ -367,8 +369,12 @@ public class UfoSpecialAttack : NPCSkill
         // 敵自身の向き変え
         Debug.Log(thisChara.charaDir);
         thisChara.SetObjectDir();
+        // マップのオブジェクト表示再読み込み
+        inactiveFarMn = parent.GetComponentInChildren<InactiveFarManager>();
+        inactiveFarMn.UpdateInactivateObjects();
 
         var warpOutEff = Instantiate(effects[1], targetChara.transform.position + new Vector3(0, 0.5f * 15, 0), targetChara.transform.rotation);
+
 
         for ( float t = 0; t < 0.5f; t += Time.deltaTime )
         {

@@ -64,7 +64,7 @@ public class DungeonInitializer : MonoBehaviour {
             }
             // 確率を満たせばNPC1が出現
             int random = Random.Range(0, 100);
-            if ( random < 100 )
+            if ( random < 5 )
             {
                 EnemySet(EnemyType.NPC1);
             }

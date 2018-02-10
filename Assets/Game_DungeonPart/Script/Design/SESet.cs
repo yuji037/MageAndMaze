@@ -7,7 +7,8 @@ public class SESet : MonoBehaviour
     public enum Type
     {
         STONE_BREAK,
-        WIND_CUT
+        WIND_CUT,
+        STAIRS_DOWN,
     }
 
     [SerializeField]
