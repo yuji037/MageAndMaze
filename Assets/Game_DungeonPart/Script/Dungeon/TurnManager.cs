@@ -27,9 +27,12 @@ public class TurnManager : MonoBehaviour {
     ObstacleManager obsMn;
     OnGroundObjectManager ogoMn;
     InactiveFarManager inactiveFarMn;
+    TutorialManager tutorialMn;
 
     [SerializeField]
     bool outDebugLog = false;
+
+    int saveTurnCount = 0;
 
     private void Awake()
     {
@@ -42,6 +45,7 @@ public class TurnManager : MonoBehaviour {
         obsMn = parent.GetComponentInChildren<ObstacleManager>();
         ogoMn = parent.GetComponentInChildren<OnGroundObjectManager>();
         inactiveFarMn = parent.GetComponentInChildren<InactiveFarManager>();
+        tutorialMn = parent.GetComponentInChildren<TutorialManager>();
         turnTable = new List<ActionData>();
     }
 
@@ -205,21 +209,37 @@ public class TurnManager : MonoBehaviour {
                 inactiveFarMn.UpdateInactivateObjects();
 
                 // セーブ
-                player.SavePlayerInfo();
-                // ↓重いかもしれないので外した方がいいかも
-                player.SaveSkill();
-                mapMn.Save(1);
-                miniMap.SaveRevealedMap();
-                eneMn.SaveEnemys();
-                obsMn.SaveObstacleData();
-                ogoMn.SaveOnGroundObjectData();
-
-                SaveData.Save();
+                DungeonSave();
 
                 yield break;
             }
 
             yield return null;
+        }
+    }
+
+
+    void DungeonSave()
+    {
+        // チュートリアル中はセーブしない
+        if ( tutorialMn.TutorialNumber < 100 ) return;
+
+        saveTurnCount++;
+        if (saveTurnCount >= 5 )
+        {
+            saveTurnCount = 0;
+
+            // セーブ
+            player.SavePlayerInfo();
+            // ↓重いかもしれないので外した方がいいかも
+            player.SaveSkill();
+            mapMn.Save(1);
+            miniMap.SaveRevealedMap();
+            eneMn.SaveEnemys();
+            obsMn.SaveObstacleData();
+            ogoMn.SaveOnGroundObjectData();
+
+            SaveData.Save();
         }
     }
 

@@ -18,15 +18,18 @@ public class OnGroundObjectManager : MonoBehaviour {
     [SerializeField]
     GameObject mapChipsParent;
 
+    private void Awake()
+    {
+        parent = GameObject.Find("GameObjectParent");
+        mapMn = parent.GetComponentInChildren<MapManager>();
+    }
+
     // 300 : 水たまり
     // 301 : 回復パネル
     // 100 : 階段
 
     public void Init()
     {
-        parent = GameObject.Find("GameObjectParent");
-        mapMn = parent.GetComponentInChildren<MapManager>();
-
         // 中断後の再開であれば 1、新規作成であれば 0
         if ( 1 == SaveData.GetInt("IsInterrupt", 0) )
         {

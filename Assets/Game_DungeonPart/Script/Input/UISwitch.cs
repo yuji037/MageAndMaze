@@ -23,6 +23,7 @@ public class UISwitch : MonoBehaviour {
     GameObject uiMenuButtons;
 
     public bool Interactable = true;
+    public DungUIType UIType;
 
 	// Use this for initialization
 	void Start () {
@@ -56,6 +57,8 @@ public class UISwitch : MonoBehaviour {
         // 「修練＆精製」「ステータス」などのウィンドウ選択ボタン
         uiMenuButtons.SetActive(( (int)DungUIType.INVENTRY <= type && type <= (int)DungUIType.SKILLTREE ) ? 
             true : false);
+
+        UIType = (DungUIType) type;
     }
 
     public void SwitchSubUI(int type, bool on)

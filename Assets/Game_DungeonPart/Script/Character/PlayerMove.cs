@@ -22,6 +22,8 @@ public class PlayerMove : MonoBehaviour
     UISwitch uiSwitch;
     EventSceneManager eventSceneMn;
 
+    TutorialManager tutorialMn;
+
     private void Awake()
     {
         parent = GameObject.Find("GameObjectParent");
@@ -32,6 +34,7 @@ public class PlayerMove : MonoBehaviour
         anim = GetComponent<AnimationChanger>();
         uiSwitch = parent.GetComponentInChildren<UISwitch>();
         eventSceneMn = parent.GetComponentInChildren<EventSceneManager>();
+        tutorialMn = parent.GetComponentInChildren<TutorialManager>();
     }
 
     // Use this for initialization
@@ -104,6 +107,14 @@ public class PlayerMove : MonoBehaviour
 
     public bool MoveStart(Vector3 dir)   // true ならば 先行入力が有効
     {
+        // チュートリアル中の操作制限
+        if ( tutorialMn.TutorialNumber < 100 )
+        {
+            if ( 2 <= tutorialMn.TutorialNumber
+                && tutorialMn.TutorialNumber <= 6
+                ) { return false; }
+        }
+
         if ( turnMn.PlayerActionSelected ) return true;
 
         if ( player.abnoState.invincibleTurn > 0 ) return false;
@@ -112,11 +123,14 @@ public class PlayerMove : MonoBehaviour
         player.charaDir = dir;
         player.SetObjectDir();
 
+        Debug.Log("マップ外かどうか");
         // マップ外かどうか
         if ( !mapMn.InsideMap(player.pos + dir) ) return false;
 
+        Debug.Log(" 移動可能な空間かどうか");
         // 移動可能な空間かどうか
         if ( !mapMn.CanMoveCheck(player.pos, player.pos + dir) ) return false;
+        Debug.Log(" 移動可能な空間");
 
         moveBtMn._isActive = false;
         player.sPos = player.pos + dir;

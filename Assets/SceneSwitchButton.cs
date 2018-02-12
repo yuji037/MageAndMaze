@@ -19,6 +19,7 @@ public class SceneSwitchButton : MonoBehaviour {
     Text fadeOutText;
     float timeFade = 0;
     bool menuOn = false;
+    
 
     // Use this for initialization
     void Start () {

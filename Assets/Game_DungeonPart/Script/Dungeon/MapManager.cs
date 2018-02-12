@@ -88,14 +88,27 @@ public class MapManager : MonoBehaviour
             
             if ( floor == 30 )
             {
+                // ボス1マップ
                 mapGene = Instantiate(mapGenerator[1]);
+                d_initializer.AllowCharaOnRoad = true;
             }
             else if ( floor % 8 == 0 )
             {
+                // 大部屋マップ
                 mapGene = Instantiate(mapGenerator[2]);
+            }
+            else if ( floor == 1 && SaveData.GetInt("IsTutorialON", 1 ) == 1)
+            {
+                // 固定マップ（現状チュートリアルのみ）
+                mapGene = Instantiate(mapGenerator[3]);
+                d_initializer.PopRandomEnemys = false;
+                d_initializer.AllowCharaOnRoad = true;
+                d_initializer.PopRandomGroundObjects = false;
+                d_initializer.PopRandomObstacles = false;
             }
             else
             {
+                // 通常ランダムマップ
                 mapGene = Instantiate(mapGenerator[0]);
             }
             var generator = mapGene.GetComponent<MapGenerator>();
@@ -111,7 +124,7 @@ public class MapManager : MonoBehaviour
         mapChipParent = GameObject.Find("MapChips");
         dungeonType = parent.GetComponentInChildren<DungeonPartManager>().dungeonType;
 
-        d_initializer.Init();
+        d_initializer.DungeonDataInit();
         
         // 階段の位置決め
         Vector3 _stairPos = d_initializer.StairsPosDecide();

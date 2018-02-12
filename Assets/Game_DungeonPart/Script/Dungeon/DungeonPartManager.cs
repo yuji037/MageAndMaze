@@ -18,6 +18,7 @@ public class DungeonPartManager : MonoBehaviour {
     SceneTransitionManager sceneTransitionManager;
     EventSceneManager eventSceneManager;
     SESet seSet;
+    TutorialManager tutorialMn;
 
     private void Awake()
     {
@@ -44,6 +45,7 @@ public class DungeonPartManager : MonoBehaviour {
         sceneTransitionManager = parent.GetComponentInChildren<SceneTransitionManager>();
         eventSceneManager = parent.GetComponentInChildren<EventSceneManager>();
         seSet = parent.GetComponentInChildren<SESet>();
+        tutorialMn = parent.GetComponentInChildren<TutorialManager>();
 
         mapManager.d_initializer = dungeonInitializer;
         mapManager.DungeonGenerate();
@@ -54,6 +56,7 @@ public class DungeonPartManager : MonoBehaviour {
         player.LoadPlayerInfo();
         player.Init();
         miniMap.MiniMapInit();
+        tutorialMn.StartBehaviour();
 
         ui = parent.GetComponentInChildren<UISwitch>();
         ui.SwitchUI((int)DungUIType.BATTLE);
@@ -105,7 +108,12 @@ public class DungeonPartManager : MonoBehaviour {
     public void SaveDataReset()
     {
         Debug.Log("セーブデータリセット");
+        
+        // リセットで消してはならないデータを残してリセット
+        int isTutorialON = SaveData.GetInt("IsTutorialON", 1);
         SaveData.Clear();
+        SaveData.SetInt("IsTutorialON", isTutorialON);
+
         SaveData.Save();
     }
 }
