@@ -29,6 +29,7 @@ public class SceneSwitchButton : MonoBehaviour {
         parent = GameObject.Find("GameObjectParent");
         sceneTransitionManager = parent.GetComponentInChildren<SceneTransitionManager>();
         sceneTransitionManager.fadeInImage.color = new Color(0, 0, 0, 0);
+        StartCoroutine(sceneTransitionManager.FadeIn());
     }
 
     // Update is called once per frame
@@ -71,8 +72,9 @@ public class SceneSwitchButton : MonoBehaviour {
             // 中断フラグOFF（最初から）
             SaveData.Clear();
             SaveData.Save();
+            SceneManager.LoadScene("Opening");
         }
-        SceneManager.LoadScene("Dungeon1");
+        else SceneManager.LoadScene("Dungeon1");
     }
 
     //public void ToDungeon2Scene()

@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4295569852679248}
   - component: {fileID: 33189562431047584}
   - component: {fileID: 23387738909039756}
+  - component: {fileID: 114704822845059100}
   m_Layer: 0
   m_Name: rock1
   m_TagString: Untagged
@@ -37,6 +38,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4700774994761214}
   - component: {fileID: 114052885119313070}
+  - component: {fileID: 114574843499182624}
   m_Layer: 0
   m_Name: rock
   m_TagString: Untagged
@@ -64,7 +66,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1474666795585824}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3, y: 0, z: -2}
+  m_LocalPosition: {x: 3, y: 0, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4295569852679248}
@@ -129,6 +131,7 @@ MonoBehaviour:
   HP: 10
   MaxHP: 10
   action: 0
+  skillNum: -1
   actionGauge: 0
   hpGaugeShowTimeMax: 2
   moveVec: {x: 0, y: 0, z: 0}
@@ -150,3 +153,27 @@ MonoBehaviour:
   perpetrator: {fileID: 0}
   type: 0
   skills: []
+  myBodys: []
+--- !u!114 &114574843499182624
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1474666795585824}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a8c389800d269c4bba91becb914f2e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  distanceInvisible: 7
+--- !u!114 &114704822845059100
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1185776977495708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0799a5f586335694eb096e62e182eace, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

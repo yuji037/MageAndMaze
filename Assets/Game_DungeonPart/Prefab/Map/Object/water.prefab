@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4205375403927900}
   - component: {fileID: 212946279176750814}
+  - component: {fileID: 114048433331841624}
   m_Layer: 0
   m_Name: New Sprite
   m_TagString: Untagged
@@ -36,6 +37,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4484724015211674}
   - component: {fileID: 114495510091372076}
+  - component: {fileID: 114971931931274612}
   m_Layer: 0
   m_Name: water
   m_TagString: Untagged
@@ -53,6 +55,7 @@ GameObject:
   - component: {fileID: 4444038976113576}
   - component: {fileID: 33804408377380088}
   - component: {fileID: 23741923973684328}
+  - component: {fileID: 114619606212770178}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -92,8 +95,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1780527478076912}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3, y: 0, z: -1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 3, y: 0, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4205375403927900}
@@ -140,6 +143,17 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1896924789043464}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &114048433331841624
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1262990939567914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0799a5f586335694eb096e62e182eace, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114495510091372076
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -154,6 +168,29 @@ MonoBehaviour:
   type: 0
   ID: 0
   pos: {x: 0, y: 0, z: 0}
+--- !u!114 &114619606212770178
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1896924789043464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0799a5f586335694eb096e62e182eace, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114971931931274612
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1780527478076912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a8c389800d269c4bba91becb914f2e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  distanceInvisible: 7
 --- !u!212 &212946279176750814
 SpriteRenderer:
   m_ObjectHideFlags: 1

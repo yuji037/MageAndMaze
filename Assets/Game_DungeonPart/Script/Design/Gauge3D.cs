@@ -31,6 +31,7 @@ public class Gauge3D : MonoBehaviour
         }
         LookAtCamera();
         float gaugePercentage = (float)chara.HP / chara.MaxHP;
+        gaugePercentage = Mathf.Clamp(gaugePercentage, 0f, 1f);
         float left = -1.28f;
         gaugeFill.transform.localPosition = new Vector3(left + 1.28f * gaugePercentage, 0, 0);
         gaugeFill.transform.localScale = new Vector3(gaugePercentage, 1, 1);

@@ -67,7 +67,14 @@ public class MapManager : MonoBehaviour
         dung_room_info2D = new int[DUNGEON_HEIGHT, DUNGEON_WIDTH];
         chara_exist2D = new int[DUNGEON_HEIGHT, DUNGEON_WIDTH];
         onground_exist2D = new int[DUNGEON_HEIGHT, DUNGEON_WIDTH];
-
+        for ( int z = 0; z < DUNGEON_HEIGHT; z++ )
+        {
+            for ( int x = 0; x < DUNGEON_WIDTH; x++ )
+            {
+                chara_exist2D[z, x] = -1;
+                onground_exist2D[z, x] = -1;
+            }
+        }
         mapChips = new GameObject[DUNGEON_HEIGHT, DUNGEON_WIDTH];
 
         floor = parent.GetComponentInChildren<DungeonPartManager>().floor;
@@ -128,7 +135,7 @@ public class MapManager : MonoBehaviour
         
         // 階段の位置決め
         Vector3 _stairPos = d_initializer.StairsPosDecide();
-        onground_exist2D[(int)_stairPos.z, (int)_stairPos.x] = 100;
+        if (floor != 30) onground_exist2D[(int)_stairPos.z, (int)_stairPos.x] = 100;
 
         // マップチップの生成
         MapChipPrefabs = new GameObject[mapChipTypeMax];
@@ -214,13 +221,14 @@ public class MapManager : MonoBehaviour
     {
         if ( !InsideMap(pos) ) return false;
 
+        // 壁の場合はダメ
         if ( dung_2D[(int)pos.z, (int)pos.x] < 0 ) return false;
 
         // 障害物はダメだが、プレイヤー・敵は居てもよい
         if ( chara_exist2D[(int)pos.z, (int)pos.x] != -1
             && chara_exist2D[(int)pos.z, (int)pos.x] >= 200
             && chara_exist2D[(int)pos.z, (int)pos.x] < 400 ) return false;
-
+        
         if ( onground_exist2D[(int)pos.z, (int)pos.x] != -1 ) return false;
 
         return true;

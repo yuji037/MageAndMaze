@@ -8,7 +8,7 @@ public class SkillTreeButtonManager : MonoBehaviour
     GameObject parent;
     private const int TREE_WID = 3, TREE_HEI = 8, NONE = -1;
     public const int RED = 0, YELLOW = 1, BLUE = 2, TREE_SUU = 3, SET_SUU = 6;
-    private int selectSkill = NONE;
+    public int selectSkill { get; private set; }
     //今選択している登録パネルの番号達
     //private bool[] selectedRegList = new bool[6];
     //UIのgameobject達
@@ -107,6 +107,7 @@ public class SkillTreeButtonManager : MonoBehaviour
             regSkillButton[i] = registPanel.transform.Find("" + i).gameObject;
         }
         Debug.Log(pst.Skills[1].Syutoku);
+        Init();
         syutokuKousin();
         RegiButKousin();
         //セレクトimageを前に出す
@@ -114,7 +115,6 @@ public class SkillTreeButtonManager : MonoBehaviour
         //SetumeiPanel.transform.SetAsLastSibling();
         //setImage.transform.SetAsLastSibling();
         //transform.SetAsLastSibling();
-        Init();
         stated = true;
     }
     private void Init()
@@ -217,12 +217,21 @@ public class SkillTreeButtonManager : MonoBehaviour
         //ソウルストーン消費量を更新
         if ( selectSkill != NONE )
         {
-
+            int red;
+            int yellow;
+            int blue;
+            red = pst.Skills[selectSkill].UseSoul[SkillTreeButtonManager.RED];
+            yellow = pst.Skills[selectSkill].UseSoul[SkillTreeButtonManager.YELLOW];
+            blue = pst.Skills[selectSkill].UseSoul[SkillTreeButtonManager.BLUE];
+            //Debug.Log("selectSkill = " + selectSkill);
             switch ( skillButtons[selectSkill].GetComponent<SkillButton>().Jotai )
             {
                 case SkillButton.jotai.GOT:
                     SyutokuButton.GetComponent<Button>().interactable = false;
                     SyutokuButton.GetComponentInChildren<Text>().text = "習得済み";
+                    SoulStoneImage[RED].transform.Find("usesoultext").GetComponent<Text>().text = "";
+                    SoulStoneImage[YELLOW].transform.Find("usesoultext").GetComponent<Text>().text = "";
+                    SoulStoneImage[BLUE].transform.Find("usesoultext").GetComponent<Text>().text = "";
                     break;
                 case SkillButton.jotai.UN_GOT:
                     if ( pst.GetComponent<PlayerItem>().stoneEnoughCheck(pst.Skills[selectSkill].UseSoul[RED], pst.Skills[selectSkill].UseSoul[YELLOW], pst.Skills[selectSkill].UseSoul[BLUE]) )
@@ -236,16 +245,17 @@ public class SkillTreeButtonManager : MonoBehaviour
                         SyutokuButton.GetComponentInChildren<Text>().text = "ソウルストーン\nが足りません";
                     }
 
-                    int red = pst.Skills[selectSkill].UseSoul[SkillTreeButtonManager.RED];
-                    int yellow = pst.Skills[selectSkill].UseSoul[SkillTreeButtonManager.YELLOW];
-                    int blue = pst.Skills[selectSkill].UseSoul[SkillTreeButtonManager.BLUE];
                     SoulStoneImage[RED].transform.Find("usesoultext").GetComponent<Text>().text = ( red == 0 ) ? "" : "-" + red;
                     SoulStoneImage[YELLOW].transform.Find("usesoultext").GetComponent<Text>().text = ( yellow == 0 ) ? "" : "-" + yellow;
                     SoulStoneImage[BLUE].transform.Find("usesoultext").GetComponent<Text>().text = ( blue == 0 ) ? "" : "-" + blue;
                     break;
                 case SkillButton.jotai.CANT_GET:
                     SyutokuButton.GetComponent<Button>().interactable = false;
-                    SyutokuButton.GetComponentInChildren<Text>().text = "習得不可";
+                    SyutokuButton.GetComponentInChildren<Text>().text = "前提スキル\n未習得";
+
+                    SoulStoneImage[RED].transform.Find("usesoultext").GetComponent<Text>().text = ( red == 0 ) ? "" : "-" + red;
+                    SoulStoneImage[YELLOW].transform.Find("usesoultext").GetComponent<Text>().text = ( yellow == 0 ) ? "" : "-" + yellow;
+                    SoulStoneImage[BLUE].transform.Find("usesoultext").GetComponent<Text>().text = ( blue == 0 ) ? "" : "-" + blue;
                     break;
             }
         }

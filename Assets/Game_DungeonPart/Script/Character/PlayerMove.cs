@@ -108,10 +108,12 @@ public class PlayerMove : MonoBehaviour
     public bool MoveStart(Vector3 dir)   // true ならば 先行入力が有効
     {
         // チュートリアル中の操作制限
-        if ( tutorialMn.TutorialNumber < 100 )
+        if ( tutorialMn.IsTutorialON )
         {
-            if ( 2 <= tutorialMn.TutorialNumber
-                && tutorialMn.TutorialNumber <= 6
+            if ( (2 <= tutorialMn.TutorialNumber
+                && tutorialMn.TutorialNumber <= 3)
+                || ( 5 <= tutorialMn.TutorialNumber
+                && tutorialMn.TutorialNumber <= 7 )
                 ) { return false; }
         }
 

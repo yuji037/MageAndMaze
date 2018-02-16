@@ -11,10 +11,11 @@ public class DungeonInitializer : MonoBehaviour {
     EnemyManager enemyMn;
     OnGroundObjectManager groundObjMn;
     ObstacleManager obsMn;
+    TutorialManager tutorialMn;
     int width;
     int height;
-    int[,] chara_exist2D;
-    int[,] onground_exist2D;
+    //int[,] chara_exist2D;
+    //int[,] onground_exist2D;
     [SerializeField] int enemyCount = 5;
 
     public int eneCount = 1;
@@ -33,9 +34,10 @@ public class DungeonInitializer : MonoBehaviour {
     int playerCloseEnemyMax = 2;
     float closeRangeMin = 7;
 
-    // プレイヤー、敵が固定位置に出現する場合の位置
+    // プレイヤー、敵、階段が固定位置に出現する場合の位置
     public Vector3 fixedPlayerPos = Vector3.one * -1;
     public Vector3 fixedEnemyPos = Vector3.one * -1;
+    public Vector3 fixedStairsPos = Vector3.one * -1;
 
     private void Awake()
     {
@@ -45,22 +47,13 @@ public class DungeonInitializer : MonoBehaviour {
         width = MapManager.DUNGEON_WIDTH;
         height = MapManager.DUNGEON_HEIGHT;
 
-        chara_exist2D = new int[height, width];
-        onground_exist2D = new int[height, width];
-        for ( int z = 0; z < height; z++ )
-        {
-            for ( int x = 0; x < width; x++ )
-            {
-                chara_exist2D[z, x] = -1;
-                onground_exist2D[z, x] = -1;
-            }
-        }
         enemyMn = parent.GetComponentInChildren<EnemyManager>();
         enemyMn.d_init = this;
         groundObjMn = parent.GetComponentInChildren<OnGroundObjectManager>();
         groundObjMn.d_init = this;
         obsMn = parent.GetComponentInChildren<ObstacleManager>();
         obsMn.d_init = this;
+        tutorialMn = parent.GetComponentInChildren<TutorialManager>();
     }
 
     public void DungeonDataInit()
@@ -80,17 +73,17 @@ public class DungeonInitializer : MonoBehaviour {
             }
             // 確率を満たせばNPC1が出現
             int random = Random.Range(0, 100);
-            if ( random < 5 )
+            if ( dMn.floor != 30 && random < 5 )
             {
                 EnemySet(EnemyType.NPC1);
             }
             DebugMessage.UpdateText();
             // MapManagerにその情報を渡す
-            mapMn.SetCharaAndObjectInfo(chara_exist2D, onground_exist2D);
+            //mapMn.SetCharaAndObjectInfo(chara_exist2D, onground_exist2D);
         }
         else
         {
-            mapMn.SetCharaAndObjectInfo(chara_exist2D, onground_exist2D);
+            //mapMn.SetCharaAndObjectInfo(chara_exist2D, onground_exist2D);
         }
 
         // 回復パネル等床オブジェクトの配置
@@ -99,6 +92,7 @@ public class DungeonInitializer : MonoBehaviour {
         // 爆弾、岩ブロックなど障害物の配置
         if (PopRandomObstacles) obsMn.Init();
 
+        if ( tutorialMn.IsTutorialON ) enemyMn.NonPatrolMode();
     }
 
 
@@ -116,7 +110,6 @@ public class DungeonInitializer : MonoBehaviour {
             Player.PosData _data = SaveData.GetClass("PlayerPosData", new Player.PosData());
             pos = new Vector3(_data.PosX, 0, _data.PosZ);
             charaDir = new Vector3(_data.DirX, 0, _data.DirZ);
-            Debug.Log(charaDir);
         }
         else if (!isFixedPlayerPos)
         {
@@ -124,14 +117,14 @@ public class DungeonInitializer : MonoBehaviour {
             pos = GetRandomPos();
             charaDir = Calc.RandomDir();
             // キャラの位置を配列に入れて予約（他とかぶらないようにする）
-            chara_exist2D[(int)pos.z, (int)pos.x] = 1;
+            mapMn.chara_exist2D[(int)pos.z, (int)pos.x] = 1;
         }
         else
         {
             // プレイヤーは固定位置
             pos = fixedPlayerPos;
             charaDir = new Vector3(0, 0, 1);
-            chara_exist2D[(int)pos.z, (int)pos.x] = 1;
+            mapMn.chara_exist2D[(int)pos.z, (int)pos.x] = 1;
         }
         player.transform.position = pos;
         Player pl = player.GetComponent<Player>();
@@ -175,7 +168,7 @@ public class DungeonInitializer : MonoBehaviour {
         if ( fixedType == EnemyType.NPC1 ) ene.idNum -= 100;
 
         // キャラの位置を配列に入れて予約（他とかぶらないようにする）
-        chara_exist2D[(int)pos.z, (int)pos.x] = ene.idNum;
+        mapMn.chara_exist2D[(int)pos.z, (int)pos.x] = ene.idNum;
 
         eneCount++;
     }
@@ -196,7 +189,7 @@ public class DungeonInitializer : MonoBehaviour {
         if ( fixedType == EnemyType.NPC1 ) ene.idNum -= 100;
 
         // キャラの位置を配列に入れて予約（他とかぶらないようにする）
-        chara_exist2D[(int)fixPos.z, (int)fixPos.x] = ene.idNum;
+        mapMn.chara_exist2D[(int)fixPos.z, (int)fixPos.x] = ene.idNum;
 
         eneCount++;
     }
@@ -204,12 +197,23 @@ public class DungeonInitializer : MonoBehaviour {
     public Vector3 StairsPosDecide()
     {
         Vector3 pos;
-        // 中断した場合はロード
-        if ( 1 == SaveData.GetInt("IsInterrupt", 0))
+        if ( 1 == SaveData.GetInt("IsInterrupt", 0) )
+        {
+            // 中断した場合はロード
             pos = new Vector3(SaveData.GetInt("StairX", 0), 0, SaveData.GetInt("StairZ", 0));
-        else pos = GetRandomPos();
+        }
+        else if ( fixedStairsPos.x != -1 )
+        {
+            // 固定マップなど階段の位置が固定している場合
+            pos = fixedStairsPos;
+        }
+        else
+        {
+            // それ以外ならばランダム
+            pos = GetRandomPos();
+        }
 
-        if (dMn.floor == 8) pos = new Vector3(23, 0, 16);
+        //if (dMn.floor == 8) pos = new Vector3(23, 0, 16);
         
         // 中断用にセーブしておく
         SaveData.SetInt("StairX", (int)pos.x);
@@ -225,8 +229,8 @@ public class DungeonInitializer : MonoBehaviour {
 
         while (mapMn.IsWall(new Vector3(px,0,pz)) //壁である 
             || (!AllowCharaOnRoad && mapMn.GetDungeonInfo(px, pz) >= mapMn.max_room )  // 通路である
-            || chara_exist2D[pz,px] != -1  //既にキャラが存在する
-            || onground_exist2D[pz,px] != -1) //既に床オブジェクトが存在する
+            || mapMn.chara_exist2D[pz,px] != -1  //既にキャラが存在する
+            || mapMn.onground_exist2D[pz,px] != -1) //既に床オブジェクトが存在する
         {
             px = Random.Range(0, width);
             pz = Random.Range(0, height);
@@ -239,15 +243,5 @@ public class DungeonInitializer : MonoBehaviour {
         }
 
         return new Vector3(px, 0, pz);
-    }
-
-    public int[,] GetCharaExist2D()
-    {
-        return chara_exist2D;
-    }
-
-    public int[,] GetOnGroundExist2D()
-    {
-        return onground_exist2D;
     }
 }

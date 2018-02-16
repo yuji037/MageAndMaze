@@ -17,6 +17,7 @@ public class Obstacle : BattleParticipant
     protected List<ActionData> thisTurnAction = new List<ActionData>();
     [SerializeField] protected List<GameObject> skills;
     protected List<GameObject> prepareSkills = new List<GameObject>();
+    [SerializeField]
     List<GameObject> myBodys = new List<GameObject>();
 
     public override void Init()

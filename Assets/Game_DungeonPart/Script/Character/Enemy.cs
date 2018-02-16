@@ -22,8 +22,7 @@ public class Enemy : BattleParticipant
 
     public EnemyType type = 0;
     AImove thisAImove = null;
-    [SerializeField]
-    List<GameObject> myBodys;
+    protected List<GameObject> myBodys = new List<GameObject>();
 
     // 倍速モンスターは 0.5f
     float needActGauge = 1;
@@ -338,9 +337,11 @@ public class Enemy : BattleParticipant
 
         float plus = 1 + (dMn.floor / 6.0f);
 
+        //int id = Random.Range(0, 3);
         itemGet.AcquireSoulStone(0, plus);
         itemGet.AcquireSoulStone(1, plus);
         itemGet.AcquireSoulStone(2, plus);
+        //itemGet.AcquireSoulStone(id, plus * 3);
     }
 
     public override void ActEnd()

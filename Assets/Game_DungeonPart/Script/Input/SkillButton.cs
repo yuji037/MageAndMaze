@@ -77,7 +77,7 @@ public class SkillButton : MonoBehaviour
             //未習得&&前提スキル未習得
             case jotai.CANT_GET:
                 GetComponent<Image>().color = new Color(0, 0, 0, 100);
-                GetComponent<Button>().interactable = false; 
+                GetComponent<Button>().interactable = true; 
                 break;
         }
     }

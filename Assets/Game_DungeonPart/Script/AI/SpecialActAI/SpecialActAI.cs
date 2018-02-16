@@ -14,7 +14,9 @@ public class SpecialActAI : MonoBehaviour {
 
     public void FindLightMonster()
     {
-        targetChara = parent.GetComponentInChildren<Player>();
+        Player player = parent.GetComponentInChildren<Player>();
+        targetChara = null;
+        targetChara = ( player.abnoState.transparentTurn <= 0 ) ? player : null;
         foreach (Enemy ene in eneMn.enemys)
         {
             if (ene.type == EnemyType.LIGHT)
@@ -47,7 +49,12 @@ public class SpecialActAI : MonoBehaviour {
     {
         // UFO は光源モンスターはターゲットしない
         //FindLightMonster();
-        targetChara = parent.GetComponentInChildren<Player>();
+
+        Player player = parent.GetComponentInChildren<Player>();
+        targetChara = null;
+        targetChara = ( player.abnoState.transparentTurn <= 0 ) ? player : null;
+
+        if ( !targetChara ) return false;
 
         bool ans = false;
 

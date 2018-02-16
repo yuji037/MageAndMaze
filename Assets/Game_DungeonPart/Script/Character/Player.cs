@@ -32,6 +32,8 @@ public class Player : BattleParticipant {
 
     public List<ActionData> thisTurnAction = new List<ActionData>();
 
+    [SerializeField] GameObject effect_LevelUp;
+
     public override void Init()
     {
         idNum = 1;
@@ -96,6 +98,15 @@ public class Player : BattleParticipant {
     {
         MaxHP = expTable.GetHP(Level);
         MaxMP = expTable.GetMP(Level);
+        StartCoroutine(LevelUpEffect());
+    }
+
+    IEnumerator LevelUpEffect()
+    {
+        effect_LevelUp.SetActive(true);
+        anim.TriggerAnimator("Pleasure");
+        yield return new WaitForSeconds(1);
+
     }
 
     public bool MpUseSkill(int useMp)
@@ -206,10 +217,10 @@ public class Player : BattleParticipant {
 
     public void DebugSoulStone()
     {
-        PlayerItem itMn = GetComponent<PlayerItem>();
-        itMn.items[0].kosuu += Random.Range(1, 30);
-        itMn.items[1].kosuu += Random.Range(1, 30);
-        itMn.items[2].kosuu += Random.Range(1, 30);
+        ItemGet itemGet = GetComponent<ItemGet>();
+        itemGet.AcquireSoulStone(0, Random.Range(1, 30));
+        itemGet.AcquireSoulStone(1, Random.Range(1, 30));
+        itemGet.AcquireSoulStone(2, Random.Range(1, 30));
     }
 
     public void PlayerActSelect()

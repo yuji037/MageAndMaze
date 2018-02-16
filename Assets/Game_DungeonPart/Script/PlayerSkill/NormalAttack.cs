@@ -35,6 +35,9 @@ public class NormalAttack : SkillBase {
             Destroy(hit, 2.0f);
         }
         HitAndParamChange();
+        yield return new WaitForSeconds(0.7f);
+        player.ActEnd();
+        Destroy(gameObject, 2.0f);
         yield return null;
 
     }
@@ -68,7 +71,5 @@ public class NormalAttack : SkillBase {
             OnDecided();
         }
         //Debug.Log("Hit");
-        player.ActEnd();
-        Destroy(gameObject, 2.0f);
     }
 }

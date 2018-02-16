@@ -55,6 +55,7 @@ public class PlayerItemUse : MonoBehaviour {
                 break;
             case 105:
                 revealedMap.canAllEnemySearch = true;
+
                 break;
             case 106:
                 playerAttack.MagicAttack(1001);

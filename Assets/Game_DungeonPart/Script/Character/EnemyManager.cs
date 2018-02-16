@@ -59,10 +59,12 @@ public class EnemyManager : MonoBehaviour
         {
             spawnCounter = 0;
             Spawn(true);
+            // ポップする間隔は10ターンまで短くなる
+            spawnFrequency = Mathf.Max(spawnFrequency - 1, 10);
         }
     }
 
-    public void Spawn(bool gainStrength)
+    public void Spawn(bool raiseStrength)
     {
         Vector3 pos;
         Vector3 dis;
@@ -73,7 +75,7 @@ public class EnemyManager : MonoBehaviour
         } while ( dis.sqrMagnitude < closeFromPlayerRange * closeFromPlayerRange );
 
         EnemyAdd(pos);
-        if (gainStrength) gainningStrength = Mathf.Min(gainningStrength + 0.3f, 3.0f);
+        if (raiseStrength) gainningStrength = Mathf.Min(gainningStrength + 0.3f, 3.0f);
     }
 
     public void SetSpawnTable()
@@ -171,7 +173,7 @@ public class EnemyManager : MonoBehaviour
         // 敵の種類選択
         if ( isFixedEnemy )
         {
-            newEnemyObj = Instantiate(enemyPrefab[8], characterParent.transform);
+            newEnemyObj = Instantiate(enemyPrefab[9], characterParent.transform);
             Debug.Log("ボス選択");
         }
         else if( fixedType != (EnemyType)( -1 ) )
@@ -332,6 +334,8 @@ public class EnemyManager : MonoBehaviour
     {
         for ( int i = enemys.Count - 1; i >= 0; i-- )
         {
+            if ( enemys[i].type == EnemyType.BOSS1 ) continue;
+
             if ( !enemys[i].IsAlive )
             {
                 var ene = enemys[i];
@@ -396,7 +400,7 @@ public class EnemyManager : MonoBehaviour
         SaveData.SetList<SavebleEnemyData>("EnemysData", enemysData);
 
         // EnemyManager の情報セーブ
-        SaveData.SetFloat("EnemyGainningStrength", gainningStrength);
+        SaveData.SetFloat("EnemyGainningStrength", 1f);
         SaveData.SetInt("EnemySpawnCounter", spawnCounter);
     }
     public void LoadEnemys()
@@ -439,19 +443,15 @@ public class EnemyManager : MonoBehaviour
         spawnCounter = SaveData.GetInt("EnemySpawnCounter", 0);
     }
 
-    //float length = 5;
-
-    //void func()
-    //{
-    //    float disMag = dis.magnitude;
-
-    //    // 上の入力があったら
-    //    disMag = Mathf.Clamp(disMag - 0.02f, 2, 8);
-    //    // 
-    //    disMag = Mathf.Clamp(disMag + 0.02f, 2, 8);
-
-
-    //    camera.transform.position = transform.position + disnormal * disMag;
-
-    //}
+    public void NonPatrolMode()
+    {
+        foreach(Enemy ene in enemys )
+        {
+            var targetPlayerMove = ene.GetComponent<TargetPlayerMove>();
+            if ( targetPlayerMove )
+            {
+                targetPlayerMove.PatrolMode = false;
+            }
+        }
+    }
 }

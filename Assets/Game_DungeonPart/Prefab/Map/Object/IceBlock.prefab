@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4175172625023300}
   - component: {fileID: 114580289284621572}
   - component: {fileID: 114707890914348462}
+  - component: {fileID: 114822109491668270}
   m_Layer: 0
   m_Name: IceBlock
   m_TagString: Untagged
@@ -38,6 +39,7 @@ GameObject:
   - component: {fileID: 4408445747617686}
   - component: {fileID: 33054718958725678}
   - component: {fileID: 23787355768273486}
+  - component: {fileID: 114956396318904328}
   m_Layer: 0
   m_Name: rock1
   m_TagString: Untagged
@@ -52,7 +54,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1559762840914364}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5, y: 0, z: -2}
+  m_LocalPosition: {x: 5, y: 0, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4408445747617686}
@@ -130,6 +132,7 @@ MonoBehaviour:
   HP: 10
   MaxHP: 10
   action: 0
+  skillNum: -1
   actionGauge: 0
   hpGaugeShowTimeMax: 2
   moveVec: {x: 0, y: 0, z: 0}
@@ -151,6 +154,7 @@ MonoBehaviour:
   perpetrator: {fileID: 0}
   type: 1
   skills: []
+  myBodys: []
 --- !u!114 &114707890914348462
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -173,3 +177,26 @@ MonoBehaviour:
   ice_resist: 0
   freeze_resist: 1
   paralize_resist: 1
+--- !u!114 &114822109491668270
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1559762840914364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a8c389800d269c4bba91becb914f2e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  distanceInvisible: 7
+--- !u!114 &114956396318904328
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1861666585718026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0799a5f586335694eb096e62e182eace, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

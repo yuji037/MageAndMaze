@@ -32,7 +32,7 @@ public class PlayCharaSwitch : MonoBehaviour {
     {
         // 切り替えアニメーション中はボタン入力を受け付けない
         if ( playerSwitchCoroutine != null) return;
-
+        
         playerSwitchCoroutine = StartCoroutine(PlayerSwitchCoroutine());
     }
 
@@ -40,6 +40,7 @@ public class PlayCharaSwitch : MonoBehaviour {
     {
         uiSwitch.Interactable = false;
 
+        player.GetComponent<AnimationChanger>().TriggerAnimator("Magic_around");
         switchEffect.SetActive(true);
         yield return new WaitForSeconds(switchCharaTime);
         isAngel = !isAngel;

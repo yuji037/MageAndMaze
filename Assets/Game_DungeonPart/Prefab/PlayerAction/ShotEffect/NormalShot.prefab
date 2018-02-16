@@ -200,7 +200,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -245,20 +245,6 @@ Light:
   m_Lightmapping: 1
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_FalloffTable:
-    m_Table[0]: 0
-    m_Table[1]: 0
-    m_Table[2]: 0
-    m_Table[3]: 0
-    m_Table[4]: 0
-    m_Table[5]: 0
-    m_Table[6]: 0
-    m_Table[7]: 0
-    m_Table[8]: 0
-    m_Table[9]: 0
-    m_Table[10]: 0
-    m_Table[11]: 0
-    m_Table[12]: 0
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
@@ -279,6 +265,10 @@ MonoBehaviour:
   target: {fileID: 0}
   moveSpeed: 6
   hitEffect: {fileID: 1577215633393920, guid: fe2c40a1143e1e44c822d00a0f16c82e, type: 2}
+  hitEffExistTime: 2
+  cameraShake: 0
+  shakeMagnitude: 1
+  flyingCurveScale: {x: 0, y: 0, z: 0}
 --- !u!198 &198547445992160912
 ParticleSystem:
   m_ObjectHideFlags: 1

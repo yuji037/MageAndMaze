@@ -9,14 +9,16 @@ public class TargetPlayerMove : AImove {
     //thisChara.type　でタイプを取得できる
     int preExistRoomNum = 0;
 
+    // 巡回モード（チュートリアルなどでOFF）
+    public bool PatrolMode = true;
+    public int NonPatrolSearchRange = 4;
 
-    void Update () {
-		
-	}
 
     public void FindLightMonster()
     {
-        targetChara = parent.GetComponentInChildren<Player>();
+        Player player = parent.GetComponentInChildren<Player>();
+        targetChara = null;
+        targetChara = ( player.abnoState.transparentTurn <= 0 ) ? player : null;
         foreach (Enemy ene in eneMn.enemys)
         {
             if (ene.type == EnemyType.LIGHT)
@@ -51,39 +53,52 @@ public class TargetPlayerMove : AImove {
         //光源モンスターかプレイヤーのどちらかをターゲットする
         FindLightMonster();
 
+        // ターゲットを発見できるかどうかの判定
         bool targetFind = false;
-        
-        if ( searchWholeFloor ) targetFind = true; 
-        else if (targetChara.existRoomNum >= 0 && targetChara.existRoomNum < mapMn.max_room) // ターゲットが部屋に居る
+
+        if ( targetChara )
         {
-            targetFind = (targetChara.existRoomNum == thisChara.existRoomNum); // ターゲットと同部屋にいれば発見
-            if (!targetFind && thisChara.existRoomNum >= mapMn.max_room)
+            if ( searchWholeFloor ) targetFind = true;
+            else if ( targetChara.existRoomNum >= 0 && targetChara.existRoomNum < mapMn.max_room )
             {
-                // ターゲットとの距離が近いと発見
-                int d_x = Mathf.Abs((int)(targetChara.sPos.x - thisChara.pos.x));
-                int d_z = Mathf.Abs((int)(targetChara.sPos.z - thisChara.pos.z));
-                targetFind = (d_x <= searchTargetRange && d_z <= searchTargetRange);
+                // ターゲットが部屋に居る
+                // ターゲットと同部屋にいれば発見
+                targetFind = ( targetChara.existRoomNum == thisChara.existRoomNum );
+                if ( !targetFind && thisChara.existRoomNum >= mapMn.max_room )
+                {
+                    // ターゲットとの距離が近いと発見
+                    int d_x = Mathf.Abs((int)( targetChara.sPos.x - thisChara.pos.x ));
+                    int d_z = Mathf.Abs((int)( targetChara.sPos.z - thisChara.pos.z ));
+                    targetFind = ( d_x <= searchTargetRange && d_z <= searchTargetRange );
+                    if ( !PatrolMode ) targetFind = ( d_x <= NonPatrolSearchRange && d_z <= NonPatrolSearchRange );
+                }
+                // 攻撃されたら発見
+                if ( !targetFind ) targetFind = ( thisChara.perpetrator );
             }
-            // 攻撃されたら発見
-            if ( !targetFind ) targetFind = ( thisChara.perpetrator );
+            else
+            {
+                // ターゲットが部屋以外の場所に居る
+                // ターゲットとの距離が近いと発見
+                int d_x = Mathf.Abs((int)( targetChara.sPos.x - thisChara.pos.x ));
+                int d_z = Mathf.Abs((int)( targetChara.sPos.z - thisChara.pos.z ));
+                targetFind = ( d_x <= searchTargetRange && d_z <= searchTargetRange );
+                if ( !PatrolMode ) targetFind = ( d_x <= NonPatrolSearchRange && d_z <= NonPatrolSearchRange );
+                // 攻撃されたら発見
+                if ( !targetFind ) targetFind = ( thisChara.perpetrator );
+            }
         }
-        else // ターゲットが部屋以外の場所に居る
-        {
-            // ターゲットとの距離が近いと発見
-            int d_x = Mathf.Abs((int)(targetChara.sPos.x - thisChara.pos.x));
-            int d_z = Mathf.Abs((int)(targetChara.sPos.z - thisChara.pos.z));
-            targetFind = (d_x <= searchTargetRange && d_z <= searchTargetRange);
-            // 攻撃されたら発見
-            if ( !targetFind ) targetFind = ( thisChara.perpetrator );
-        }
-        if (!targetFind) { // ターゲット未発見 ＝ 巡回モード
-            // 目標地点がある かつ　着いた
-            if (targetPos.x != -1 && thisChara.pos == targetPos)                                             
+
+        // 行動を決める処理
+        if (!targetFind) {
+            // ターゲット未発見 ＝ 巡回モード
+            // 目標地点がある かつ　目標地点に着いた
+            if ( targetPos.x != -1 && thisChara.pos == targetPos)                                             
             {
                 targetPos.x = -1;   // ←NULLとして扱う
             }
-            // 目標地点NULL かつ thisChara が部屋に居る場合
-            if ( targetPos.x == -1 && thisChara.existRoomNum >= 0 && thisChara.existRoomNum < mapMn.max_room )
+            // 目標地点NULL かつ thisChara が部屋に居て、巡回モードONの場合
+            if ( targetPos.x == -1 && thisChara.existRoomNum >= 0 && thisChara.existRoomNum < mapMn.max_room
+                && PatrolMode)
             {
                 // 一番遠い出入り口を目標地点に登録
                 Vector3[] gatewayPos = mapMn.room_info[thisChara.existRoomNum].gatewayPos;
@@ -114,9 +129,17 @@ public class TargetPlayerMove : AImove {
                     targetPos = gatewayPos[minNum];
                 }
             }
-            // 目標地点NULL かつ 部屋以外に居る場合
+            // それ以外で目標地点NULLの場合
+            // （つまり部屋以外にいて巡回モードONか、
+            // または巡回モードOFF）
             else if ( targetPos.x == -1 )
             {
+                if ( !PatrolMode )
+                {
+                    thisChara.moveVec = Vector3.zero;
+                    return true;
+                }
+
                 Vector3 dir = thisChara.charaDir;               // まっすぐ進む
                 if ( mapMn.CanMoveCheck(thisChara.pos, thisChara.pos + dir) )
                 {
@@ -180,6 +203,8 @@ public class TargetPlayerMove : AImove {
             }
         }
         // ターゲット発見状態なら
+        Debug.Log("targetFind = " + targetFind);
+        if ( !targetChara ) return true;
         targetPos = targetChara.sPos;
         preExistRoomNum = thisChara.existRoomNum;
         Vector3 dis = targetPos - thisChara.sPos;

@@ -12,6 +12,7 @@ public class PlayerAttack : MonoBehaviour {
     PlayerActionAnimation actAnim;
     TurnManager turnMn;
     MapManager mapMn;
+    TutorialManager tutorialMn;
     [SerializeField] GameObject[] rangePrafab;
     [SerializeField] List<GameObject> rangeRects = new List<GameObject>();
     GameObject selectingAct;
@@ -27,6 +28,7 @@ public class PlayerAttack : MonoBehaviour {
         actAnim = GetComponent<PlayerActionAnimation>();
         turnMn = parent.GetComponentInChildren<TurnManager>();
         mapMn = parent.GetComponentInChildren<MapManager>();
+        tutorialMn = parent.GetComponentInChildren<TutorialManager>();
         popUpDescription = parent.GetComponentInChildren<MagicSelectPopUpDescription>().gameObject;
     }
 
@@ -91,6 +93,27 @@ public class PlayerAttack : MonoBehaviour {
     }
     public void MagicAttack(int num)
     {
+        // チュートリアル中の操作制限
+        if ( tutorialMn.IsTutorialON )
+        {
+            if ( ( 2 <= tutorialMn.TutorialNumber
+                && tutorialMn.TutorialNumber <= 4 )
+                //|| ( 5 <= tutorialMn.TutorialNumber
+                //&& tutorialMn.TutorialNumber <= 6 )
+                )
+            {
+                // 一切の攻撃不可
+                return;
+            }
+            if ( ( 5 <= tutorialMn.TutorialNumber
+                && tutorialMn.TutorialNumber <= 6 )
+                )
+            {
+                // マジックショット以外不可
+                if (num != 1) return;
+            }
+        }
+
         if (turnMn.PlayerActionSelected) return;
 
         attackType = num;

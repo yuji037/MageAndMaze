@@ -28,6 +28,6 @@ public class ItemGet : MonoBehaviour {
         float rate = 0;
         float reaperBonus = playCharaSwitch.isAngel ? 0.7f : 1.3f;
         rate = Random.Range(0.8f, 1.2f);
-        playerItem.items[itemID].kosuu += Mathf.RoundToInt(plus * rate * reaperBonus);
+        playerItem.GetItem(itemID, Mathf.RoundToInt(plus * rate * reaperBonus));
     }
 }

@@ -11,6 +11,10 @@ public enum SubUIType
 
 public class UISwitch : MonoBehaviour {
 
+    GameObject parent;
+    TutorialManager tutorialMn;
+    SESet seSet;
+
     [SerializeField]
     GameObject[] uis = new GameObject[(int)DungUIType.DungUITypeMax];
     [SerializeField]
@@ -36,10 +40,46 @@ public class UISwitch : MonoBehaviour {
             }
         }
         uiMenuButtons.GetComponent<Canvas>().enabled = true;
+
+        parent = GameObject.Find("GameObjectParent");
+        tutorialMn = parent.GetComponentInChildren<TutorialManager>();
     }
 	
     public void SwitchUI(int type)
     {
+        if ( !parent ) Start();
+
+        // チュートリアル中の操作制限
+        if ( tutorialMn.IsTutorialON )
+        {
+            if ( ( 1 <= tutorialMn.TutorialNumber
+                && tutorialMn.TutorialNumber <= 6 )
+                //|| ( 5 <= tutorialMn.TutorialNumber
+                //&& tutorialMn.TutorialNumber <= 6 )
+                )
+            {
+                // ステータス画面への切り替え不可
+                if ( type == (int)DungUIType.INVENTRY )
+                    return;
+            }
+            if ( 8 <= tutorialMn.TutorialNumber
+            && tutorialMn.TutorialNumber <= 11 )
+            {
+                // スキルツリー以外への切り替え不可
+                if ( type != (int)DungUIType.EVENT
+                    && type != (int)DungUIType.SKILLTREE )
+                    return;
+            }
+            if ( 12 <= tutorialMn.TutorialNumber
+            && tutorialMn.TutorialNumber <= 13 )
+            {
+                // 会話UIと修練＆精製UI以外への切り替え不可
+                if ( type != (int)DungUIType.EVENT
+                    && type != (int)DungUIType.PRACTICE_AND_ITEMCRAFT )
+                    return;
+            }
+        }
+
         if ( !Interactable ) return;
 
         // type に合致するものだけアクティブ化

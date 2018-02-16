@@ -48,6 +48,8 @@ public class FixedMapGenerator : MapGenerator
     bool dungeonInit = false;
 
     DungeonPartManager dMn;
+    ObstacleManager obsMn;
+    OnGroundObjectManager ogoMn;
 
     public override int GetMaxRoom()
     {
@@ -86,6 +88,8 @@ public class FixedMapGenerator : MapGenerator
         parent = GameObject.Find("GameObjectParent");
         dungeonInitializer = parent.GetComponentInChildren<DungeonInitializer>();
         dMn = parent.GetComponentInChildren<DungeonPartManager>();
+        obsMn = parent.GetComponentInChildren<ObstacleManager>();
+        ogoMn = parent.GetComponentInChildren<OnGroundObjectManager>();
 
         int[,] map2D = new int[MapManager.DUNGEON_HEIGHT, MapManager.DUNGEON_WIDTH];
 
@@ -97,6 +101,8 @@ public class FixedMapGenerator : MapGenerator
         // 最初の行は日本語の情報のみなので飛ばす
         reader.ReadLine();
 
+        // 2 = 破壊不可能な壁、1 = 壁、0 = 部屋空間、3 = 道空間
+        // E = 固定敵、P = プレイヤー、回＝回復パネル、水＝水たまり、氷＝氷ブロック、岩＝岩ブロック、爆＝爆弾、階＝階段
         int Z = MapManager.DUNGEON_HEIGHT - 1;
         while ( reader.Peek() > -1 )
         {
@@ -105,14 +111,39 @@ public class FixedMapGenerator : MapGenerator
             string[] words = line.Split(delimiterChars);
             for ( int X = 0; X < words.Length; ++X )
             {
+                Vector3 position = new Vector3(X, 0, Z);
                 switch ( words[X] )
                 {
                     case "P":
-                        dungeonInitializer.fixedPlayerPos = new Vector3(X, 0, Z);
+                        dungeonInitializer.fixedPlayerPos = position;
                         map2D[Z, X] = 3;
                         break;
                     case "E":
-                        dungeonInitializer.EnemySet(new Vector3(X, 0, Z));
+                        dungeonInitializer.EnemySet(position);
+                        map2D[Z, X] = 3;
+                        break;
+                    case "回":
+                        ogoMn.AddOnGroundObject(OnGroundObject.Type.HEAL_PANEL, position, true);
+                        map2D[Z, X] = 3;
+                        break;
+                    case "水":
+                        ogoMn.AddOnGroundObject(OnGroundObject.Type.WATER, position, true);
+                        map2D[Z, X] = 3;
+                        break;
+                    case "階":
+                        dungeonInitializer.fixedStairsPos = position;
+                        map2D[Z, X] = 3;
+                        break;
+                    case "氷":
+                        obsMn.AddObstacle(Obstacle.Type.ICEBLOCK, position, true);
+                        map2D[Z, X] = 3;
+                        break;
+                    case "岩":
+                        obsMn.AddObstacle(Obstacle.Type.ROCK, position, true);
+                        map2D[Z, X] = 3;
+                        break;
+                    case "爆":
+                        obsMn.AddObstacle(Obstacle.Type.BOMB, position, true);
                         map2D[Z, X] = 3;
                         break;
                     default:
@@ -124,7 +155,7 @@ public class FixedMapGenerator : MapGenerator
             Z--;
         }
 
-        // 2 = 破壊不可能な壁、1 = 壁、0 = 部屋空間、3 = 道空間、E = 固定敵、P = プレイヤー
+        // 2 = 破壊不可能な壁、1 = 壁、0 = 部屋空間、3 = 道空間
         for ( var z = 0; z < dungeon_height; z++ )
         {
             for ( var x = 0; x < dungeon_width; x++ )

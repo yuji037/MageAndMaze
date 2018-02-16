@@ -32,7 +32,11 @@ public class TurnManager : MonoBehaviour {
     [SerializeField]
     bool outDebugLog = false;
 
-    int saveTurnCount = 0;
+    int saveTurnCount = 4;
+
+    // （30Fでは）ステージボスのHPを監視
+    [SerializeField]
+    Enemy boss = null;
 
     private void Awake()
     {
@@ -59,6 +63,13 @@ public class TurnManager : MonoBehaviour {
         // すでに行動選択が終わっている場合は無意味
         if ( PlayerActionSelected ) return;
         PlayerActionSelected = true;
+
+        // ステージボスがいる場合はボスを検出
+        foreach(Enemy enemy in eneMn.enemys )
+        {
+            var _boss = enemy.gameObject.GetComponent<StageBoss>();
+            if ( _boss ) boss = enemy;
+        }
 
         eneMn.EnemyActionSelect();
 
@@ -209,7 +220,7 @@ public class TurnManager : MonoBehaviour {
                 inactiveFarMn.UpdateInactivateObjects();
 
                 // セーブ
-                DungeonSave();
+                SaveTurnCheck();
 
                 yield break;
             }
@@ -218,29 +229,45 @@ public class TurnManager : MonoBehaviour {
         }
     }
 
+    private void Update()
+    {
+        if ( boss )
+        {
+            if (boss.HP <= 0 )
+            {
+                // プレイヤー行動不可
+                PlayerActionSelected = true;
+            }
+        }
+    }
 
-    void DungeonSave()
+    public void SaveTurnCheck()
     {
         // チュートリアル中はセーブしない
-        if ( tutorialMn.TutorialNumber < 100 ) return;
+        if ( tutorialMn.IsTutorialON ) return;
 
         saveTurnCount++;
-        if (saveTurnCount >= 5 )
+        if ( saveTurnCount >= 5 )
         {
             saveTurnCount = 0;
-
-            // セーブ
-            player.SavePlayerInfo();
-            // ↓重いかもしれないので外した方がいいかも
-            player.SaveSkill();
-            mapMn.Save(1);
-            miniMap.SaveRevealedMap();
-            eneMn.SaveEnemys();
-            obsMn.SaveObstacleData();
-            ogoMn.SaveOnGroundObjectData();
-
-            SaveData.Save();
+            DungeonSave();
         }
+    }
+
+    public void DungeonSave()
+    {
+        // セーブ
+        Debug.Log("セーブ（ターン経過による）");
+        player.SavePlayerInfo();
+        // ↓重いかもしれないので外した方がいいかも
+        player.SaveSkill();
+        mapMn.Save(1);
+        miniMap.SaveRevealedMap();
+        eneMn.SaveEnemys();
+        obsMn.SaveObstacleData();
+        ogoMn.SaveOnGroundObjectData();
+
+        SaveData.Save();
     }
 
     public void DeathCheck()
