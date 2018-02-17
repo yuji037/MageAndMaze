@@ -16,7 +16,7 @@ public class UISwitch : MonoBehaviour {
     SESet seSet;
 
     [SerializeField]
-    GameObject[] uis = new GameObject[(int)DungUIType.DungUITypeMax];
+    Canvas[] uis;
     [SerializeField]
     GameObject[] subUIs = new GameObject[(int)SubUIType.SubUITypeMax];
 
@@ -81,13 +81,19 @@ public class UISwitch : MonoBehaviour {
         }
 
         if ( !Interactable ) return;
-
+        
         // type に合致するものだけアクティブ化
         for (int t = 0; t < (int)DungUIType.DungUITypeMax; t++)
         {
             if ( uis[t] )
             {
-                uis[t].SetActive(( t == type ) ? true : false);
+                if ((int)DungUIType.INVENTRY <= type && type <= (int)DungUIType.SKILLTREE
+                    && (int)DungUIType.INVENTRY <= t && t <= (int)DungUIType.SKILLTREE )
+                {
+                    uis[t].gameObject.SetActive(true);
+                    uis[t].GetComponent<Canvas>().enabled = ( t == type );
+                }
+                else uis[t].gameObject.SetActive( t == type );
             }
         }
 

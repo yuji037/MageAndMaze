@@ -88,6 +88,7 @@ public class TutorialManager : MonoBehaviour {
     IEnumerator TutorialCoroutine()
     {
         player = parent.GetComponentInChildren<Player>();
+        TurnManager turnMn = parent.GetComponentInChildren<TurnManager>();
 
         arrow.SetActive(false);
         eventSceneManager.EventStart("tutorial1");
@@ -277,7 +278,7 @@ public class TutorialManager : MonoBehaviour {
         }
 
         // 回復パネルの説明位置
-        while ( player.pos.x < 17 )
+        while ( player.pos.x < 17 || turnMn.PlayerActionSelected )
         {
             yield return null;
         }
@@ -286,7 +287,7 @@ public class TutorialManager : MonoBehaviour {
         eventSceneManager.EventStart("tutorial_heal");
 
         // 爆弾の説明位置
-        while ( player.pos.z > 17 )
+        while ( player.pos.z > 17 || turnMn.PlayerActionSelected )
         {
             yield return null;
         }
@@ -294,7 +295,7 @@ public class TutorialManager : MonoBehaviour {
         eventSceneManager.EventStart("tutorial_bomb");
 
         // 岩・氷ブロックの説明位置
-        while ( player.pos.x > 15 )
+        while ( player.pos.x > 15 || turnMn.PlayerActionSelected )
         {
             yield return null;
         }
@@ -302,7 +303,7 @@ public class TutorialManager : MonoBehaviour {
         //eventSceneManager.EventStart("rockAndIceBlock");
 
         // 水たまりの説明位置
-        while ( player.pos.x > 9 )
+        while ( player.pos.x > 9 || turnMn.PlayerActionSelected )
         {
             yield return null;
         }
@@ -310,7 +311,7 @@ public class TutorialManager : MonoBehaviour {
         //eventSceneManager.EventStart("water");
 
         // 階段の説明位置
-        while ( player.pos.z > 7 )
+        while ( player.pos.z > 7 || turnMn.PlayerActionSelected )
         {
             yield return null;
         }
