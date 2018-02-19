@@ -50,6 +50,7 @@ public class EventSceneManager : MonoBehaviour {
     EnemyManager eneMn;
     PlayerItem playerItem;
     TutorialManager tutorialMn;
+    NPCEventManager npcEventManager;
 
     // 発生したイベントファイル名を覚えておいて
     // 同フロアで二度同じイベントは起きないようにする
@@ -67,6 +68,7 @@ public class EventSceneManager : MonoBehaviour {
         eneMn = parent.GetComponentInChildren<EnemyManager>();
         playerItem = parent.GetComponentInChildren<PlayerItem>();
         tutorialMn = parent.GetComponentInChildren<TutorialManager>();
+        npcEventManager = parent.GetComponentInChildren<NPCEventManager>();
 
         data[ImageType.Ange1] = Resources.Load<Sprite>("Image/EventUI/ange1") as Sprite;
         data[ImageType.Ange2] = Resources.Load<Sprite>("Image/EventUI/ange2") as Sprite;
@@ -213,6 +215,7 @@ public class EventSceneManager : MonoBehaviour {
                 chooseEventText[1] = words[7];
                 break;
             case 99:
+                // ナレーションウィンドウにテキスト表示
                 uiSwitch.SwitchUI((int)lastUIType);
                 narrationWindow.SetActive(true);
                 if ( !narrationText ) narrationText = narrationWindow.GetComponentInChildren<Text>();
@@ -220,7 +223,7 @@ public class EventSceneManager : MonoBehaviour {
                 StartCoroutine(NarrationWindowBehaviour());
                 break;
             default:
-                CauseEffectiveEvent(eventNum);
+                npcEventManager.CauseEffectiveEvent(eventNum);
                 break;
 
         }
@@ -290,26 +293,5 @@ public class EventSceneManager : MonoBehaviour {
         eventText.text = txt;
     }
 
-    void CauseEffectiveEvent(int eventNum)
-    {
-        switch ( eventNum )
-        {
-            case 20:
-                // ソウルストーン入手
-                playerItem.items[0].kosuu += 10;
-                playerItem.items[1].kosuu += 10;
-                playerItem.items[2].kosuu += 10;
-                break;
-            case 21:
-                // 敵ポップ
-                for ( int i = 0; i < 5; i++ )
-                {
-                    eneMn.Spawn(false);
-                }
-                break;
-            default:
-                break;
-        }
 
-    }
 }

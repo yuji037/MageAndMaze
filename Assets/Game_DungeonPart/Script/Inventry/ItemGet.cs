@@ -24,10 +24,12 @@ public class ItemGet : MonoBehaviour {
     {
         if ( !playCharaSwitch ) Awake();
 
+        // ソウルストーンの取得個数を調整する処理
         if ( itemID < 0 || 2 < itemID ) return;
         float rate = 0;
         float reaperBonus = playCharaSwitch.isAngel ? 0.7f : 1.3f;
         rate = Random.Range(0.8f, 1.2f);
+        // 実際の所持数増減
         playerItem.GetItem(itemID, Mathf.RoundToInt(plus * rate * reaperBonus));
     }
 }

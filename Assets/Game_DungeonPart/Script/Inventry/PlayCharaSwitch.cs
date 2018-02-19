@@ -40,7 +40,7 @@ public class PlayCharaSwitch : MonoBehaviour {
     {
         uiSwitch.Interactable = false;
 
-        player.GetComponent<AnimationChanger>().TriggerAnimator("Magic_around");
+        player.GetComponent<AnimationChanger>().TriggerAnimator("Pleasure");
         switchEffect.SetActive(true);
         yield return new WaitForSeconds(switchCharaTime);
         isAngel = !isAngel;

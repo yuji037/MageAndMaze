@@ -214,7 +214,10 @@ public class TurnManager : MonoBehaviour {
                 // 死亡した敵がいるか確認
                 DeathCheck();
                 // ターン経過での敵スポーン
-                eneMn.SpawnCounterPlus();
+                if ( !tutorialMn.IsTutorialON )
+                {
+                    eneMn.SpawnCounterPlus();
+                }
 
                 miniMap.MiniMapUpdate();
                 inactiveFarMn.UpdateInactivateObjects();

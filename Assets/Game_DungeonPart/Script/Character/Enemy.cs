@@ -12,7 +12,6 @@ public enum EnemyType
     GHOST,
     MAKEWALL,
     LIGHT,
-    NPC1,
     BOSS1,
 }
 
@@ -21,6 +20,7 @@ public class Enemy : BattleParticipant
     // エネミーのステータス、状態異常、行動選択を管理
 
     public EnemyType type = 0;
+    public bool isSpeakable = false;
     AImove thisAImove = null;
     protected List<GameObject> myBodys = new List<GameObject>();
 
@@ -113,8 +113,6 @@ public class Enemy : BattleParticipant
         if ( actionGauge < needActGauge )
         {
             // 行動不可
-            //action = ActionType.NON_ACTION;
-            //turnMn.AddAction(this, action, sequence, Vector3.zero);
             pos = transform.position;
             return;
         }
@@ -122,10 +120,8 @@ public class Enemy : BattleParticipant
 
 
 
-        // 死亡時行動不可
-        //if (action == ActionType.DEAD) return;
 
-        if (type == EnemyType.NPC1 )
+        if ( isSpeakable )
         {
             // NPCなら何もせず
             return;
@@ -160,12 +156,17 @@ public class Enemy : BattleParticipant
 
         if (!specialAct) // falseだったので移動または通常攻撃を選択
         {
-            // 付属のAImove が移動すべきと判定すれば true
+            // 付属のAImoveが通常攻撃すべきと判断すれば false それ以外なら true
             if (thisAImove.GetMoveVec() && !mapMn.IsBreakableObstacle(pos + moveVec))
             {
+                if (moveVec == Vector3.zero )
+                {
+                    // 何もしない
+                    return;
+                }
+                // 移動
                 sPos = pos + moveVec;
-                moveDir = moveVec;
-                if (moveDir != Vector3.zero) charaDir = moveDir;
+                charaDir = moveVec;
                 mapMn.SetCharaExistInfo(pos);
                 mapMn.SetCharaExistInfo(sPos, idNum, true);
                 // 倍速時の一手先行動選択のため pos に sPos を入れる
@@ -176,6 +177,11 @@ public class Enemy : BattleParticipant
             }
             else // falseだったので通常攻撃を選択
             {
+                if ( !skills[0] )
+                {
+                    Debug.Log("エラー：通常攻撃スキルが設定されていません");
+                    return;
+                }
                 var atk = Instantiate(skills[0], transform);
                 prepareSkills.Add(atk);
                 var norSkill = atk.GetComponent<NPCSkill>();
@@ -325,6 +331,7 @@ public class Enemy : BattleParticipant
             {
                 Destroy(aliveBody);
             }
+            parent.GetComponentInChildren<EnemyManager>().EmitDeathEffect(transform.position);
             isAlive = false;
         }
     }

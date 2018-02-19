@@ -149,6 +149,7 @@ public class ItemButtonManager : MonoBehaviour
         useStones[(int)traningStoneColor] = useItemSyuren[traningStoneColor];
         useItemReload(( items[traningStoneColor].kosuu >= useItemSyuren[traningStoneColor] ) ? useStones : null);
         setCreateItems();
+        GameObject.Find("GameObjectParent").GetComponentInChildren<PlayerDetailInfo>().UpdateStatusText();
         lvUpCheckReload();
     }
     public void noOnClick()
@@ -164,6 +165,7 @@ public class ItemButtonManager : MonoBehaviour
             items[i.Key].kosuu -= i.Value;
         }
         items[canCreateItemsId[selectPanelNum]].kosuu++;
+        GameObject.Find("GameObjectParent").GetComponentInChildren<InventryInfo>().UpdateInventry();
         lvUpCheckReload();
     }
 

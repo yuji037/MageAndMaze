@@ -14,8 +14,6 @@ public class DungeonInitializer : MonoBehaviour {
     TutorialManager tutorialMn;
     int width;
     int height;
-    //int[,] chara_exist2D;
-    //int[,] onground_exist2D;
     [SerializeField] int enemyCount = 5;
 
     public int eneCount = 1;
@@ -34,9 +32,8 @@ public class DungeonInitializer : MonoBehaviour {
     int playerCloseEnemyMax = 2;
     float closeRangeMin = 7;
 
-    // プレイヤー、敵、階段が固定位置に出現する場合の位置
+    // プレイヤー、階段が固定位置に出現する場合の位置
     public Vector3 fixedPlayerPos = Vector3.one * -1;
-    public Vector3 fixedEnemyPos = Vector3.one * -1;
     public Vector3 fixedStairsPos = Vector3.one * -1;
 
     private void Awake()
@@ -71,19 +68,18 @@ public class DungeonInitializer : MonoBehaviour {
             {
                 EnemySet();
             }
-            // 確率を満たせばNPC1が出現
+            // 確率を満たせばNPCが出現
             int random = Random.Range(0, 100);
             if ( dMn.floor != 30 && random < 5 )
             {
-                EnemySet(EnemyType.NPC1);
+                var npc = EnemySet();
+                if (npc) npc.isSpeakable = true;
             }
             DebugMessage.UpdateText();
-            // MapManagerにその情報を渡す
-            //mapMn.SetCharaAndObjectInfo(chara_exist2D, onground_exist2D);
         }
         else
         {
-            //mapMn.SetCharaAndObjectInfo(chara_exist2D, onground_exist2D);
+
         }
 
         // 回復パネル等床オブジェクトの配置
@@ -134,64 +130,58 @@ public class DungeonInitializer : MonoBehaviour {
         
     }
 
-    void EnemySet(EnemyType fixedType = (EnemyType)(-1))
+    // ランダム位置に敵を配置する場合
+    Enemy EnemySet(EnemyType fixedType = (EnemyType)(-1))
     {
         float sqrPlayerCloseRange = 0;
         Vector3 pos = Vector3.zero;
-        // 固定位置に出現する敵かどうか（ボスなど）
-        bool isFixedEnemy = false;
 
         // プレイヤーに近い敵が一定数以上にならないよう難易度調整
         do
         {
-            isFixedEnemy = ( eneCount == 1 && fixedEnemyPos.x != -1 );
-
-            if ( isFixedEnemy )
-            {
-                pos = fixedEnemyPos;
-            }
-            else pos = GetRandomPos();
+            pos = GetRandomPos();
             if ( pos.x == -1 )
             {
                 // マップ範囲外なので生成不可、これ以上の生成をしない
                 eneCount = enemyCount + 1;
                 Debug.Log("敵生成：マップに許容範囲が少なく、これ以上生成できません。");
-                break;
+                return null;
             }
             sqrPlayerCloseRange = ( pos - player.transform.position ).sqrMagnitude;
-        } while ( !isFixedEnemy && eneCount <= playerCloseEnemyMax && sqrPlayerCloseRange < closeRangeMin * closeRangeMin );
+        } while ( eneCount <= playerCloseEnemyMax && sqrPlayerCloseRange < closeRangeMin * closeRangeMin );
 
-
-        var ene = enemyMn.EnemyAdd(pos, isFixedEnemy, fixedType);
+        var ene = enemyMn.EnemyAdd(pos, fixedType);
+        if ( !ene ) return null;
         if ( (int)fixedType != -1 && ene) ene.type = fixedType;
-        // NPCモンスターはIDは400～
-        if ( fixedType == EnemyType.NPC1 ) ene.idNum -= 100;
 
         // キャラの位置を配列に入れて予約（他とかぶらないようにする）
         mapMn.chara_exist2D[(int)pos.z, (int)pos.x] = ene.idNum;
 
         eneCount++;
+
+        return ene;
     }
 
-    public void EnemySet(Vector3 fixPos, EnemyType fixedType = (EnemyType)( -1 ))
+    // 固定位置に敵を配置する場合
+    public Enemy EnemySet(Vector3 fixPos, EnemyType fixedType = (EnemyType)( -1 ))
     {
         if ( fixPos.x == -1 )
         {
             // マップ範囲外なので生成不可、これ以上の生成をしない
             eneCount = enemyCount + 1;
             Debug.Log("敵生成：マップに許容範囲が少なく、これ以上生成できません。");
-            return;
+            return null;
         }
 
         var ene = enemyMn.EnemyAdd(fixPos);
+        if ( !ene ) return null;
         if ( (int)fixedType != -1 && ene ) ene.type = fixedType;
-        // NPCモンスターはIDは400～
-        if ( fixedType == EnemyType.NPC1 ) ene.idNum -= 100;
 
         // キャラの位置を配列に入れて予約（他とかぶらないようにする）
         mapMn.chara_exist2D[(int)fixPos.z, (int)fixPos.x] = ene.idNum;
 
         eneCount++;
+        return ene;
     }
 
     public Vector3 StairsPosDecide()

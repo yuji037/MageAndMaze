@@ -23,6 +23,7 @@ public class PlayerMove : MonoBehaviour
     EventSceneManager eventSceneMn;
 
     TutorialManager tutorialMn;
+    EnemyManager eneMn;
 
     private void Awake()
     {
@@ -35,6 +36,7 @@ public class PlayerMove : MonoBehaviour
         uiSwitch = parent.GetComponentInChildren<UISwitch>();
         eventSceneMn = parent.GetComponentInChildren<EventSceneManager>();
         tutorialMn = parent.GetComponentInChildren<TutorialManager>();
+        eneMn = parent.GetComponentInChildren<EnemyManager>();
     }
 
     // Use this for initialization
@@ -58,25 +60,10 @@ public class PlayerMove : MonoBehaviour
     // Update is called once per frame
     public void MoveUpdate()
     {
-
         if ( moveVec != Vector3.zero )
         {
             Move();
         }
-        //if (moveVec == Vector3.zero && resMoveDir != Vector3.zero) // 先行入力があったら
-        //{
-        //    if (!turnMn.PlayerActionSelected 
-        //        && !MoveStart(resMoveDir))
-        //        resMoveDir = Vector3.zero;
-        //    if (moveVec != Vector3.zero)
-        //    {
-        //        //Move();
-        //    }
-        //}
-        //if (player.action >= ActionType.ATTACK)
-        //{
-        //    resMoveDir = Vector3.zero;
-        //}
     }
 
     float actionRate = 0;
@@ -190,8 +177,18 @@ public class PlayerMove : MonoBehaviour
             {
                 Vector3 checkPos = new Vector3(x, 0, z);
                 if ( !mapMn.InsideMap(checkPos) ) continue;
-                if ( 400 <= mapMn.chara_exist2D[z, x] && mapMn.chara_exist2D[z, x] < 500 )
+                int chara = mapMn.chara_exist2D[z, x];
+                // その場所に居るのが敵キャラならば
+                if ( 500 <= mapMn.chara_exist2D[z, x] )
                 {
+                    var enemy = eneMn.GetEnemy(mapMn.chara_exist2D[z, x]);
+                    if ( !enemy.isSpeakable ) continue;
+
+                    // その敵に話しかけられる場合
+                    var npcEventMn = parent.GetComponentInChildren<NPCEventManager>();
+                    npcEventMn.SetEnemyType(enemy.type);
+
+                    // 「話しかける」ボタンの表示
                     uiSwitch.SwitchSubUI((int)SubUIType.INTERACT, true);
                     return;
                 }

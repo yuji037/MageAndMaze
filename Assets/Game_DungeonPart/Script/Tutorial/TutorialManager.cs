@@ -49,6 +49,7 @@ public class TutorialManager : MonoBehaviour {
     ArrowTransformData[] arrowTransformData;
 
     [SerializeField] GameObject narrationWindow;
+    [SerializeField] GameObject playerAppearanceEffect;
 
     public int TutorialNumber { get; private set; }
 
@@ -76,6 +77,7 @@ public class TutorialManager : MonoBehaviour {
 
             eventTriggerCameraRotater.RotateMoveButtonsAndMiniMap(180);
             TutorialNumber = 0;
+            StartCoroutine(PlayerAppearanceCoroutine());
             StartCoroutine(TutorialCoroutine());
         }
         else
@@ -83,6 +85,19 @@ public class TutorialManager : MonoBehaviour {
             Debug.Log("チュートリアルに関してエラーが起きている。");
             TutorialNumber = 100;
         }
+    }
+
+    // プレイヤー登場エフェクト
+    IEnumerator PlayerAppearanceCoroutine()
+    {
+        playerAppearanceEffect.SetActive(true);
+        var se = playerAppearanceEffect.GetComponent<AudioSource>();
+        // SEは鳴らさない
+        se.enabled = false;
+        yield return new WaitForSeconds(4);
+
+        se.enabled = true;
+        playerAppearanceEffect.SetActive(false);
     }
 
     IEnumerator TutorialCoroutine()

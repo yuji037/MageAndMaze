@@ -92,6 +92,7 @@ MonoBehaviour:
   sceneTransitionCanvas: {fileID: 223998432191540950}
   fadeInImage: {fileID: 114818657627683282}
   fadeSpeed: 1
+  bgm: {fileID: 0}
 --- !u!114 &114818657627683282
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -164,7 +165,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 20
+  m_SortingOrder: 200
   m_TargetDisplay: 0
 --- !u!224 &224115829440455872
 RectTransform:

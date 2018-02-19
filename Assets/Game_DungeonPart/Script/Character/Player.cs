@@ -51,7 +51,10 @@ public class Player : BattleParticipant {
     {
         dMn.SaveDataReset();
         anim.TriggerAnimator("Dead");
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(2);
+        var sceneTransitionManager = parent.GetComponentInChildren<SceneTransitionManager>();
+        if ( sceneTransitionManager )
+            yield return StartCoroutine(sceneTransitionManager.FadeOut());
         UnityEngine.SceneManagement.SceneManager.LoadScene("GameOver");
     }
 

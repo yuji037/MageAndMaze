@@ -52,10 +52,13 @@ public class PlayerItem : MonoBehaviour
         ItemData data;
         if ( !items.TryGetValue(ID, out data) ) return;
 
-        data.kosuu += count;
+        // アイテムの増減（0より小さくならないように）
+        data.kosuu = Mathf.Max(data.kosuu + count, 0);
+
         var obj = Instantiate(getText, getTextParent.transform);
         var _text = obj.GetComponentInChildren<Text>();
         _text.text = ((count >= 0) ? "+" : "-") + data.name + "×" + count;
+        _text.color = ( count >= 0 ) ? new Color(0, 1, 0) : new Color(1, 0, 0);
         StartCoroutine(FadeOutCoroutine(_text));
     }
 
