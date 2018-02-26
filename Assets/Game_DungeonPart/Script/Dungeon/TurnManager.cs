@@ -277,43 +277,6 @@ public class TurnManager : MonoBehaviour {
     {
         eneMn.DestroyCheck();
         obsMn.DestroyCheck();
-        //bool ok = false;
-        // 死んだ敵がリストから全く居なくなると ok = true になる
-
-        //while ( !ok )
-        //{
-        //    foreach ( Enemy ene in eneMn.enemys )
-        //    {
-        //        ok = false;
-        //        if ( !ene.IsAlive )
-        //        {
-        //            eneMn.EnemyRemove(ene.idNum);
-        //            Destroy(ene.gameObject);
-        //            //SetLastEnemy();
-        //            break;
-        //        }
-        //        ok = true;
-        //    }
-        //    if ( eneMn.enemys.Count == 0 )
-        //    {
-        //        ok = true;
-        //    }
-        //    foreach (Obstacle obs in obsMn.obstacleList )
-        //    {
-        //        ok = false;
-        //        if ( !obs.IsAlive )
-        //        {
-        //            obsMn.RemoveObstacle(obs.idNum);
-        //            Destroy(obs.gameObject);
-        //            break;
-        //        }
-        //        ok = true;
-        //    }
-        //    if ( obsMn.obstacleList.Count == 0 )
-        //    { 
-        //        ok = true;
-        //    }
-        //}
     }
 
     public void AddAction(ActionData addAction)

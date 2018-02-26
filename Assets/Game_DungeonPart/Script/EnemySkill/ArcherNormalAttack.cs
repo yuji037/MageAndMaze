@@ -38,7 +38,8 @@ public class ArcherNormalAttack : NPCSkill
         thisChara.SetObjectDir();
         if ( isPlayPerformance )
         {
-            anim.TriggerAnimator("Attack");
+            //anim.TriggerAnimator("Attack");
+            thisChara.GetComponent<Animator>().CrossFade("Attack", 0.3f, 0, 0.5f);
             yield return new WaitForSeconds(hitTime);
         }
         // ヒット時点
@@ -50,6 +51,7 @@ public class ArcherNormalAttack : NPCSkill
         }
         if ( isPlayPerformance )
         {
+            // 矢がターゲットに刺さった後、弓に戻るまで消す必要がある
             arrow = thisChara.GetComponentInChildren<Arrow>().GetComponent<MeshRenderer>();
             if ( arrow ) arrow.enabled = false;
             yield return new WaitForSeconds(0.3f);
@@ -57,7 +59,7 @@ public class ArcherNormalAttack : NPCSkill
         thisChara.ActEnd();
         if ( isPlayPerformance )
         {
-            yield return new WaitForSeconds(1.2f);
+            yield return new WaitForSeconds(0.2f);
             if ( arrow ) arrow.enabled = true;
         }
         Destroy(gameObject);

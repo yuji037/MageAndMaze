@@ -24,7 +24,8 @@ public class NPCEventManager : MonoBehaviour {
 
     public void CauseEvent()
     {
-        string _fileName = "EventTextNPC1";
+        // 暫定的に
+        string _fileName = "tutorial5";
 
         eventSceneMn.EventStart(_fileName);
     }

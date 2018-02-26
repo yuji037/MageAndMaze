@@ -116,6 +116,7 @@ public class PlayerAttack : MonoBehaviour {
 
         if (turnMn.PlayerActionSelected) return;
 
+        // 指定番号のスキルを発動
         attackType = num;
         player.action = ActionType.ATTACK;
         ActionData addAction = new ActionData(player, player.action, attackType, 0, Vector3.zero);

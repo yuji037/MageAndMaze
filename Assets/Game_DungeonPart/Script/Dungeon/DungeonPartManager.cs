@@ -77,12 +77,12 @@ public class DungeonPartManager : MonoBehaviour {
             Debug.Log("IsInterrupt = " + SaveData.GetInt("IsInterrupt", 0));
             // 階の最初にイベント発生する際
             int random = Random.Range(0, 100);
-            // 今は確率0％
-            if ( random < 10 )
+            // 確率10％ずつ
+            if ( random < 50 )
             {
                 eventSceneManager.EventStart("Event_1");
             }
-            else if ( random < 20 )
+            else if ( random < 100 )
             {
                 eventSceneManager.EventStart("Event_3");
             }

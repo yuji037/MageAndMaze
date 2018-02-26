@@ -338,17 +338,18 @@ public class Enemy : BattleParticipant
 
     void KillReward()
     {
+        if ( type == EnemyType.LIGHT ) return;
+
         Player player = parent.GetComponentInChildren<Player>();
         player.ExpGet(RewardExp);
         ItemGet itemGet = parent.GetComponentInChildren<ItemGet>();
 
         float plus = 1 + (dMn.floor / 6.0f);
+        if ( type == EnemyType.TREASURE ) plus *= 10;
 
-        //int id = Random.Range(0, 3);
         itemGet.AcquireSoulStone(0, plus);
         itemGet.AcquireSoulStone(1, plus);
         itemGet.AcquireSoulStone(2, plus);
-        //itemGet.AcquireSoulStone(id, plus * 3);
     }
 
     public override void ActEnd()

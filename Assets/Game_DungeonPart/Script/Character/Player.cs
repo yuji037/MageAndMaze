@@ -78,7 +78,7 @@ public class Player : BattleParticipant {
         }
         if ( HP < 0 ) HP = 0;
         anim.TriggerAnimator("Damaged");
-        dmgEffMn.CreateEffectText(sPos, damage * -1);
+        dmgEffMn.CreateEffectText(sPos, damage);
     }
 
     int preLevel = 0;

@@ -40,7 +40,8 @@ public class InactiveFarFromPlayer : MonoBehaviour {
             isActive = isClose;
             foreach(GameObject obj in gameObjectList )
             {
-                obj.SetActive(isActive);
+                if ( obj )
+                    obj.SetActive(isActive);
             }
         }
 	}

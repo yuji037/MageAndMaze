@@ -18,21 +18,19 @@ public class NormalAttack : SkillBase {
 
     private IEnumerator Coroutine()
     {
-        for (float e = 0; e < 0.1f; e += Time.deltaTime)
-        {
-            anim.TriggerAnimator("Attack");
-            yield return null;
-        }
+        anim.TriggerAnimator("Attack");
+        yield return null;
+
         var swingSE = Instantiate(effects[0], transform);
         swingSE.transform.position = transform.position;
         Destroy(swingSE, 2.0f);
         yield return null;
         yield return new WaitForSeconds(0.1f);
-        if (battleTarget)
+        if ( battleTarget )
         {
-            var hit = Instantiate(effects[1], transform);
-            hit.transform.position = battleTarget.transform.position;
-            Destroy(hit, 2.0f);
+            var hitEff = Instantiate(effects[1], transform);
+            hitEff.transform.position = battleTarget.transform.position;
+            Destroy(hitEff, 2.0f);
         }
         HitAndParamChange();
         yield return new WaitForSeconds(0.7f);
@@ -45,19 +43,19 @@ public class NormalAttack : SkillBase {
     public override void SetTarget(Vector3 pos) // しかしposは使用されない
     {
         Vector3 targetP = player.pos + player.charaDir;
-        int chara = mapMn.chara_exist2D[(int)targetP.z, (int)targetP.x];
         int mapChip = mapMn.dung_2D[(int)targetP.z, (int)targetP.x];
+        int chara = mapMn.chara_exist2D[(int)targetP.z, (int)targetP.x];
 
-        if (chara != 0) //キャラがいたら
+        if ( mapChip == -1) //壁があったら
+        {
+            hitPos = targetP - player.charaDir * 0.5f;
+            return;
+        }
+        if ( chara != 0 ) //キャラがいたら
         {
             battleTarget = eneMn.GetEnemy(chara);
             if ( !battleTarget ) battleTarget = obsMn.GetObstacle(chara);
             hitPos = targetP;
-            return;
-        }
-        if (mapChip == 0) //壁があったら
-        {
-            hitPos = targetP - player.charaDir * 0.5f;
             return;
         }
         hitPos = targetP;
@@ -70,6 +68,5 @@ public class NormalAttack : SkillBase {
             battleTarget.DamageParameter((int)rowPower, ParamType.HP, element, player);
             OnDecided();
         }
-        //Debug.Log("Hit");
     }
 }

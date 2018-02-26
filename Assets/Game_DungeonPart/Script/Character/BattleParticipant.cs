@@ -102,7 +102,13 @@ public class BattleParticipant : MonoBehaviour {
             default:
                 break;
         }
-        dmgEffMn.CreateEffectText(pos, damage * -1);
+        dmgEffMn.CreateEffectText(pos, damage);
+        DeathCheck();
+    }
+
+    public virtual void Kill()
+    {
+        HP = 0;
         DeathCheck();
     }
 

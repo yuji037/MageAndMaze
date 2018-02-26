@@ -26,6 +26,7 @@ public class PlayerActionAnimation : MonoBehaviour {
         {
             int _useMp = skills[attackType].GetComponent<SkillBase>().useMp;
             if ( !player.MpUseSkill(_useMp) ) attackType = 0;      // MP足りなかったら物理攻撃を自動選択
+
             player.skillNum = attackType;
             var _act = Instantiate(skills[attackType], transform);
             var _skillBase = _act.GetComponent<SkillBase>();

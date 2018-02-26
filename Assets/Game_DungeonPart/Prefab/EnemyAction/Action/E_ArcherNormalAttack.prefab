@@ -144,4 +144,4 @@ MonoBehaviour:
   rangeZ: 1
   arrow: {fileID: 0}
   hitEff: {fileID: 1614927340017018, guid: 041f5db71692499449bb6a2cfa6e4745, type: 2}
-  hitTime: 1.3
+  hitTime: 0.3
