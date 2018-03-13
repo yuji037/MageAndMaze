@@ -15,6 +15,7 @@ public class TitleScene_TutorialSelect : MonoBehaviour {
     public void OnTapToggle()
     {
         SaveData.SetInt("IsTutorialON", toggle_isTutorialON.isOn ? 1 : 0);
+        Debug.Log("セーブ");
         SaveData.Save();
     }
 }

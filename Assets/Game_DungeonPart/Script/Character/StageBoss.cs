@@ -43,6 +43,6 @@ public class StageBoss : MonoBehaviour {
 
         parent.GetComponentInChildren<DungeonPartManager>().SaveGameClear();
 
-        UnityEngine.SceneManagement.SceneManager.LoadScene("GameClear");
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Ending");
     }
 }

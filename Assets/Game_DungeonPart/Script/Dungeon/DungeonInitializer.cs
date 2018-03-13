@@ -70,7 +70,7 @@ public class DungeonInitializer : MonoBehaviour {
             }
             // 確率を満たせばNPCが出現
             int random = Random.Range(0, 100);
-            if ( dMn.floor != 30 && random < 5 )
+            if ( dMn.floor != 30 && random < 100 )
             {
                 var npc = EnemySet();
                 if (npc) npc.isSpeakable = true;
@@ -173,7 +173,7 @@ public class DungeonInitializer : MonoBehaviour {
             return null;
         }
 
-        var ene = enemyMn.EnemyAdd(fixPos);
+        var ene = enemyMn.EnemyAdd(fixPos, fixedType);
         if ( !ene ) return null;
         if ( (int)fixedType != -1 && ene ) ene.type = fixedType;
 

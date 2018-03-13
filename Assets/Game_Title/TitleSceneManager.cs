@@ -99,8 +99,8 @@ public class TitleSceneManager : MonoBehaviour {
         if ( !isContinue )
         {
             // 中断フラグOFF（最初から）
-            SaveData.Clear();
-            SaveData.Save();
+            DungeonPartManager.SaveDataReset();
+            //SaveData.Save();
             SceneManager.LoadScene("Opening");
         }
         else SceneManager.LoadScene("Dungeon1");

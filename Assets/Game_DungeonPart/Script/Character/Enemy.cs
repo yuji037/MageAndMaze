@@ -314,11 +314,14 @@ public class Enemy : BattleParticipant
         if ( abnoState.paralizeTurn > 0 ) abnoState.paralizeTurn--;
     }
 
-    protected override void DeathCheck()
+    protected override void DeathCheck(bool emitDeathEffect = true)
     {
         if ( HP <= 0 && isAlive )
         {
-            KillReward();
+            if ( perpetrator == player )
+            {
+                KillReward();
+            }
             mapMn.SetCharaExistInfo(sPos);
             foreach ( GameObject deadObj in deadObjPrefab )
             {
@@ -331,7 +334,7 @@ public class Enemy : BattleParticipant
             {
                 Destroy(aliveBody);
             }
-            parent.GetComponentInChildren<EnemyManager>().EmitDeathEffect(transform.position);
+            if (emitDeathEffect) parent.GetComponentInChildren<EnemyManager>().EmitDeathEffect(transform.position);
             isAlive = false;
         }
     }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ObstacleIceblock : Obstacle {
 
-    protected override void DeathCheck()
+    protected override void DeathCheck(bool emitDeathEffect = true)
     {
         base.DeathCheck();
         OnGroundObjectManager ogoMn = parent.GetComponentInChildren<OnGroundObjectManager>();

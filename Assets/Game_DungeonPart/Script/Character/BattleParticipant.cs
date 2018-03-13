@@ -106,10 +106,10 @@ public class BattleParticipant : MonoBehaviour {
         DeathCheck();
     }
 
-    public virtual void Kill()
+    public virtual void Kill(bool emitDeathEffect = true)
     {
         HP = 0;
-        DeathCheck();
+        DeathCheck(emitDeathEffect);
     }
 
     public virtual void Init()
@@ -159,7 +159,7 @@ public class BattleParticipant : MonoBehaviour {
 
     }
 
-    protected virtual void DeathCheck()
+    protected virtual void DeathCheck(bool emitDeathEffect = true)
     {
         if ( HP <= 0 && isAlive )
         {
@@ -175,6 +175,7 @@ public class BattleParticipant : MonoBehaviour {
     public void HealByPercent(float rate)
     {
         int healValue = (int)Mathf.Floor(MaxHP * rate);
+        Debug.Log("Heal : " + healValue);
         HP = Mathf.Min(HP + healValue, MaxHP);
     }
 

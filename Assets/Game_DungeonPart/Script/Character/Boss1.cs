@@ -6,7 +6,7 @@ public class Boss1 : Enemy {
 
     StageBoss stageBoss;
 
-    protected override void DeathCheck()
+    protected override void DeathCheck(bool emitDeathEffect = true)
     {
         if ( HP <= 0 && isAlive )
         {

@@ -16,7 +16,7 @@ public class DungeonPartManager : MonoBehaviour {
     public int floor = 1;
     UISwitch ui;
     SceneTransitionManager sceneTransitionManager;
-    EventSceneManager eventSceneManager;
+    EventCanvasManager eventSceneManager;
     SESet seSet;
     TutorialManager tutorialMn;
     PlayerItem playerItem;
@@ -45,7 +45,7 @@ public class DungeonPartManager : MonoBehaviour {
         enemyManager = parent.GetComponentInChildren<EnemyManager>();
         moveButtonManager = parent.GetComponentInChildren<MoveButtonManager>();
         sceneTransitionManager = parent.GetComponentInChildren<SceneTransitionManager>();
-        eventSceneManager = parent.GetComponentInChildren<EventSceneManager>();
+        eventSceneManager = parent.GetComponentInChildren<EventCanvasManager>();
         seSet = parent.GetComponentInChildren<SESet>();
         tutorialMn = parent.GetComponentInChildren<TutorialManager>();
         playerItem = parent.GetComponentInChildren<PlayerItem>();
@@ -75,17 +75,17 @@ public class DungeonPartManager : MonoBehaviour {
         else if (0 == SaveData.GetInt("IsInterrupt", 0) && floor != 30)
         {
             Debug.Log("IsInterrupt = " + SaveData.GetInt("IsInterrupt", 0));
-            // 階の最初にイベント発生する際
-            int random = Random.Range(0, 100);
-            // 確率10％ずつ
-            if ( random < 50 )
-            {
-                eventSceneManager.EventStart("Event_1");
-            }
-            else if ( random < 100 )
-            {
-                eventSceneManager.EventStart("Event_3");
-            }
+            //// 階の最初にイベント発生する際
+            //int random = Random.Range(0, 100);
+            //// 確率10％ずつ
+            //if ( random < 50 )
+            //{
+            //    eventSceneManager.EventStart("Event_1");
+            //}
+            //else if ( random < 100 )
+            //{
+            //    eventSceneManager.EventStart("Event_3");
+            //}
         }
 
         // アイテム個数の初期化
@@ -144,7 +144,7 @@ public class DungeonPartManager : MonoBehaviour {
         NextFloor();
     }
 
-    public void SaveDataReset()
+    public static void SaveDataReset()
     {
         Debug.Log("セーブデータリセット");
         
@@ -154,6 +154,11 @@ public class DungeonPartManager : MonoBehaviour {
         SaveData.SetInt("IsTutorialON", _isTutorialON);
 
         SaveData.Save();
+    }
+
+    public void SaveData_Reset()
+    {
+        SaveDataReset();
     }
 
     bool isDoubleSpeed = false;

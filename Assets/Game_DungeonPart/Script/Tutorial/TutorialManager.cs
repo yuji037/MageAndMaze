@@ -18,7 +18,7 @@ public class TutorialManager : MonoBehaviour {
     GameObject parent;
     DungeonPartManager dMn;
     Player player;
-    EventSceneManager eventSceneManager;
+    EventCanvasManager eventSceneManager;
     [SerializeField] GameObject cameraParent;
     [SerializeField] GameObject magicSelectWindow;
     CameraManager cameraMn;
@@ -69,7 +69,7 @@ public class TutorialManager : MonoBehaviour {
         // チュートリアルをする時以外、処理の必要なし
         if ( dMn.floor == 1 && SaveData.GetInt("IsTutorialON", 1) == 1 )
         {
-            eventSceneManager = parent.GetComponentInChildren<EventSceneManager>();
+            eventSceneManager = parent.GetComponentInChildren<EventCanvasManager>();
             eventTriggerCameraRotater = parent.GetComponentInChildren<EventTriggerCameraRotater>();
             uiSwitch = parent.GetComponentInChildren<UISwitch>();
             playerSkillTree = parent.GetComponentInChildren<PlayerSkillTree>();
@@ -322,16 +322,16 @@ public class TutorialManager : MonoBehaviour {
         {
             yield return null;
         }
-        Debug.Log("water");
-        //eventSceneManager.EventStart("water");
+        //Debug.Log("water");
+        eventSceneManager.EventStart("tutorial_water");
 
         // 階段の説明位置
         while ( player.pos.z > 7 || turnMn.PlayerActionSelected )
         {
             yield return null;
         }
-        Debug.Log("stairs");
-        //eventSceneManager.EventStart("stairs");
+        //Debug.Log("stairs");
+        eventSceneManager.EventStart("tutorial_stair");
 
 
         yield return null;

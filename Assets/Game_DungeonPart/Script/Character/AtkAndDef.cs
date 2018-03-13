@@ -64,15 +64,15 @@ public class AtkAndDef : MonoBehaviour {
                 break;
             case SkillBase.TYPE.FLAME:
                 _powerF *= base_magic_power;
-                _powerF *= flame_power;
+                _powerF *= Mathf.Log(flame_power) + 1;
                 break;
             case SkillBase.TYPE.LIGHTNING:
                 _powerF *= base_magic_power;
-                _powerF *= light_power;
+                _powerF *= Mathf.Log(light_power) + 1;
                 break;
             case SkillBase.TYPE.ICE:
                 _powerF *= base_magic_power;
-                _powerF *= ice_power;
+                _powerF *= Mathf.Log(ice_power) + 1;
                 break;
         }
         // 地形効果

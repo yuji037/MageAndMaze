@@ -4,9 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 
-public class OpeningDialogManager : MonoBehaviour
-{
-
+public class EventCanvasManager : MonoBehaviour {
+    
     enum ImageType
     {
         NONE = 0,
@@ -23,14 +22,14 @@ public class OpeningDialogManager : MonoBehaviour
     }
 
     Dictionary<ImageType, Sprite> data = new Dictionary<ImageType, Sprite>();
-
+    
     TextAsset dialog;
     StringReader reader;
     [SerializeField]
     float textDisplaySpeed = 0.3f;
 
     GameObject parent;
-    //UISwitch uiSwitch;
+    UISwitch uiSwitch;
     [SerializeField]
     Image[] Pictures;
     [SerializeField]
@@ -42,36 +41,34 @@ public class OpeningDialogManager : MonoBehaviour
 
     string[] chooseEventText = { "", "" };
 
-    //[SerializeField] GameObject narrationWindow;
-    //Text narrationText;
+    [SerializeField] GameObject narrationWindow;
+    Text narrationText;
 
     AudioSource audioSource;
     [SerializeField] AudioClip[] sounds;
 
-    //EnemyManager eneMn;
-    //PlayerItem playerItem;
+    EnemyManager eneMn;
+    PlayerItem playerItem;
+    TutorialManager tutorialMn;
+    NPCEventManager npcEventManager;
 
     // 発生したイベントファイル名を覚えておいて
     // 同フロアで二度同じイベントは起きないようにする
     List<string> fileNames = new List<string>();
 
-    //DungUIType lastUIType;
-
-    [SerializeField] OpeningManager openingMn;
-
-    [SerializeField] GameObject warpEffect;
-    [SerializeField] Image flashImage;
+    DungUIType lastUIType;
 
     // Use this for initialization
-    void Start()
-    {
-
+    void Start () {
+        
         if ( parent ) return;
         parent = GameObject.Find("GameObjectParent");
-        //uiSwitch = parent.GetComponentInChildren<UISwitch>();
+        uiSwitch = parent.GetComponentInChildren<UISwitch>();
         audioSource = GetComponent<AudioSource>();
-        //eneMn = parent.GetComponentInChildren<EnemyManager>();
-        //playerItem = parent.GetComponentInChildren<PlayerItem>();
+        eneMn = parent.GetComponentInChildren<EnemyManager>();
+        playerItem = parent.GetComponentInChildren<PlayerItem>();
+        tutorialMn = parent.GetComponentInChildren<TutorialManager>();
+        npcEventManager = parent.GetComponentInChildren<NPCEventManager>();
 
         data[ImageType.Ange1] = Resources.Load<Sprite>("Image/EventUI/ange1") as Sprite;
         data[ImageType.Ange2] = Resources.Load<Sprite>("Image/EventUI/ange2") as Sprite;
@@ -79,18 +76,17 @@ public class OpeningDialogManager : MonoBehaviour
         data[ImageType.Grim2] = Resources.Load<Sprite>("Image/EventUI/grim2") as Sprite;
 
     }
-
-    // Update is called once per frame
-    void Update()
-    {
+	
+	// Update is called once per frame
+	void Update () {
 
     }
 
     public bool IsThisEventFinished(string _fileName)
     {
-        foreach ( string name in fileNames )
+        foreach(string name in fileNames )
         {
-            if ( _fileName == name )
+            if (_fileName == name )
             {
                 return true;
             }
@@ -107,16 +103,16 @@ public class OpeningDialogManager : MonoBehaviour
         if ( !parent ) Start();
 
         // 以前がEventUIでなければ記憶しておく
-        //if ( uiSwitch.UIType != DungUIType.EVENT ) lastUIType = uiSwitch.UIType;
+        if (uiSwitch.UIType != DungUIType.EVENT) lastUIType = uiSwitch.UIType;
 
         fileNames.Add(_fileName);
 
-        //uiSwitch.SwitchUI((int)DungUIType.EVENT);
+        uiSwitch.SwitchUI((int)DungUIType.EVENT);
         chooseButtons.SetActive(false);
 
         dialog = Resources.Load<TextAsset>("Dialog/" + _fileName) as TextAsset;
         reader = new StringReader(dialog.text);
-
+        
         // 最初の行は列の説明なので飛ばす
         reader.ReadLine();
 
@@ -126,7 +122,7 @@ public class OpeningDialogManager : MonoBehaviour
 
     void PictureChange(int positionNum, ImageType type)
     {
-        if ( type == ImageType.NONE )
+        if (type == ImageType.NONE )
         {
             Pictures[positionNum].enabled = false;
         }
@@ -149,7 +145,6 @@ public class OpeningDialogManager : MonoBehaviour
     // 次の行に進む処理
     public void OnTapMessageBox()
     {
-        //Debug.Log("Tap");
         // 選択肢が出ている時は感知しない
         if ( chooseButtons.activeSelf ) return;
 
@@ -161,10 +156,11 @@ public class OpeningDialogManager : MonoBehaviour
         // ダイアログ終了
         else
         {
-            //narrationWindow.SetActive(false);
-            //uiSwitch.SwitchUI((int)lastUIType);
-            if ( warp == null )
-                StartCoroutine(openingMn.ToDungeonScene());
+            //reader.Close();
+            //Resources.UnloadAsset(dialog);
+            //Resources.UnloadUnusedAssets();
+            if (uiSwitch.UIType == DungUIType.EVENT) uiSwitch.SwitchUI((int)lastUIType);
+            narrationWindow.SetActive(false);
         }
     }
 
@@ -182,7 +178,7 @@ public class OpeningDialogManager : MonoBehaviour
         Debug.Log(str);
         string[] words = str.Split(delimiterChars);
 
-        if ( words.Length < 4 ) return -1;
+        //if ( words.Length < 4 ) return -1;
 
         // 効果音、選択肢などイベントの種類を表す
         int eventNum = 0;
@@ -196,6 +192,11 @@ public class OpeningDialogManager : MonoBehaviour
         SetEventText(words[3]);
 
         if ( words.Length == 4 ) return 0;
+
+        if (eventNum!= 99 )
+        {
+            narrationWindow.SetActive(false);
+        }
 
         switch ( eventNum )
         {
@@ -217,14 +218,15 @@ public class OpeningDialogManager : MonoBehaviour
                 chooseEventText[1] = words[7];
                 break;
             case 99:
-                //uiSwitch.SwitchUI((int)lastUIType);
-                //narrationWindow.SetActive(true);
-                //if ( !narrationText ) narrationText = narrationWindow.GetComponentInChildren<Text>();
+                // ナレーションウィンドウにテキスト表示
+                uiSwitch.SwitchUI((int)lastUIType);
+                narrationWindow.SetActive(true);
+                if ( !narrationText ) narrationText = narrationWindow.GetComponentInChildren<Text>();
                 SetNarrationText(words[3]);
                 StartCoroutine(NarrationWindowBehaviour());
                 break;
             default:
-                CauseEffectiveEvent(eventNum);
+                npcEventManager.CauseEffectiveEvent(eventNum);
                 break;
 
         }
@@ -233,8 +235,22 @@ public class OpeningDialogManager : MonoBehaviour
 
     IEnumerator NarrationWindowBehaviour()
     {
-        yield return new WaitForSeconds(0.2f);
-        yield return StartCoroutine(WaitUntilFingerUp());
+        yield return new WaitForSeconds(0.5f);
+        // ナレーションが先へ進む又は閉じる処理
+        if ( tutorialMn.IsTutorialON )
+        {
+            int tutoNumber = tutorialMn.TutorialNumber;
+            // チュートリアル番号が変化したら先へ
+            while ( tutorialMn.TutorialNumber == tutoNumber )
+            {
+                yield return null;
+            }
+        }
+        else
+        {
+            // タップしたら先へ
+            yield return StartCoroutine(WaitUntilFingerUp());
+        }
         OnTapMessageBox();
     }
 
@@ -262,7 +278,7 @@ public class OpeningDialogManager : MonoBehaviour
             txt += "\n";
         }
 
-        //narrationText.text = txt;
+        narrationText.text = txt;
     }
 
     void SetEventText(string str)
@@ -271,7 +287,7 @@ public class OpeningDialogManager : MonoBehaviour
         char[] delimiterChars = { 'B' };
         string[] words = str.Split(delimiterChars);
         string txt = "";
-        foreach ( string word in words )
+        foreach(string word in words )
         {
             txt += word;
             txt += "\n";
@@ -280,61 +296,5 @@ public class OpeningDialogManager : MonoBehaviour
         eventText.text = txt;
     }
 
-    void CauseEffectiveEvent(int eventNum)
-    {
-        switch ( eventNum )
-        {
-            case 20:
-                // ソウルストーン入手
-                //playerItem.items[0].kosuu += 10;
-                //playerItem.items[1].kosuu += 10;
-                //playerItem.items[2].kosuu += 10;
-                break;
-            case 21:
-                // 敵ポップ
-                for ( int i = 0; i < 5; i++ )
-                {
-                    //eneMn.Spawn(false);
-                }
-                break;
-            case 100:
-                warp = StartCoroutine(WarpEffectCoroutine());
-                break;
-            default:
-                break;
-        }
 
-    }
-
-    Coroutine warp;
-
-    IEnumerator WarpEffectCoroutine()
-    {
-        warpEffect.SetActive(true);
-        flashImage.color = new Color(1, 1, 1, 0);
-        yield return new WaitForSeconds(1);
-
-        warpEffect.GetComponentInChildren<AudioSource>().Play();
-
-        yield return new WaitForSeconds(1);
-
-        for ( float t = 0; t < 1; t += Time.deltaTime )
-        {
-            flashImage.color = new Color(1, 1, 1, t);
-            yield return null;
-        }
-
-        yield return new WaitForSeconds(1);
-        Pictures[0].enabled = false;
-        Pictures[1].enabled = false;
-        warpEffect.SetActive(false);
-
-        for ( float t = 0; t < 0.5f; t += Time.deltaTime )
-        {
-            flashImage.color = new Color(1, 1, 1, 1 - t * 2);
-            yield return null;
-        }
-        flashImage.color = new Color(0, 0, 0, 0);
-        warp = null;
-    }
 }

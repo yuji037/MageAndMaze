@@ -27,10 +27,13 @@ public class ItemButtonManager : MonoBehaviour
     private int selectPanelNum = -1;
     int[] useItemSyuren = new int[3];
     bool inited = false;
+    AtkAndDef playerAAD = null;
+
     private void Start()
     {
         items = GameObject.Find("GameObjectParent").GetComponentInChildren<PlayerItem>().items;
         player = GameObject.Find("GameObjectParent").GetComponentInChildren<Player>();
+        playerAAD = player.GetComponent<AtkAndDef>();
         for ( int i = 0; i < 12; i++ )
         {
             createItemsButton.Add(transform.Find("CreateImage (" + i + ")").gameObject);
@@ -41,9 +44,7 @@ public class ItemButtonManager : MonoBehaviour
         }
         selectedPanel();
         setCreateItems();
-        useItemSyuren[(int)PlayerItem.stone.RED_STONE] = 5;
-        useItemSyuren[(int)PlayerItem.stone.YELLOW_STONE] = 5;
-        useItemSyuren[(int)PlayerItem.stone.BLUE_STONE] = 5;
+        UpdateUseItemSyuren();
         syouhiItemsImg[0].GetComponent<Image>().sprite = items[0].itemImage;
         syouhiItemsImg[1].GetComponent<Image>().sprite = items[1].itemImage;
         syouhiItemsImg[2].GetComponent<Image>().sprite = items[2].itemImage;
@@ -52,6 +53,14 @@ public class ItemButtonManager : MonoBehaviour
         eleLvUpCheckPanel.SetActive(false);
         inited = true;
     }
+
+    void UpdateUseItemSyuren()
+    {
+        useItemSyuren[(int)PlayerItem.stone.RED_STONE] = 5 + ( (int)( ( playerAAD.FlameMagicPower - 1 ) * 10 ) / 5 ) * 5;
+        useItemSyuren[(int)PlayerItem.stone.YELLOW_STONE] = 5 + ( (int)( ( playerAAD.LightMagicPower - 1 ) * 10 ) / 5 ) * 5;
+        useItemSyuren[(int)PlayerItem.stone.BLUE_STONE] = 5 + ( (int)( ( playerAAD.IceMagicPower - 1 ) * 10 ) / 5 ) * 5;
+    }
+
     private void OnEnable()
     {
         if ( inited )
@@ -111,6 +120,8 @@ public class ItemButtonManager : MonoBehaviour
         useItemReload(( panelnum == -1 ) ? null : items[canCreateItemsId[panelnum]].syouhiSozai);
 
     }
+
+
     public void eleLvUpOnClick(int stone_color)
     {
         switch ( stone_color )
@@ -138,14 +149,13 @@ public class ItemButtonManager : MonoBehaviour
     }
     public void yesOnClick()
     {
+        if ( items == null ) return;
 
-        if ( items[traningStoneColor] != null )
-        {
-            items[traningStoneColor].kosuu -= useItemSyuren[traningStoneColor];
-            if ( items[traningStoneColor].kosuu < useItemSyuren[traningStoneColor] ) eleLvUpCheckPanel.SetActive(false);
-        }
+        items[traningStoneColor].kosuu -= useItemSyuren[traningStoneColor];
         player.ElementLevelUp(traningStoneColor + 1);
         Dictionary<int, int> useStones = new Dictionary<int, int>();
+        UpdateUseItemSyuren();
+        if ( items[traningStoneColor].kosuu < useItemSyuren[traningStoneColor] ) eleLvUpCheckPanel.SetActive(false);
         useStones[(int)traningStoneColor] = useItemSyuren[traningStoneColor];
         useItemReload(( items[traningStoneColor].kosuu >= useItemSyuren[traningStoneColor] ) ? useStones : null);
         setCreateItems();

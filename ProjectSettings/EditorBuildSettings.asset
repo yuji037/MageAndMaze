@@ -21,5 +21,8 @@ EditorBuildSettings:
     path: Assets/Game_Scene/GameOver.unity
     guid: 3c1cbf1a07ea16d4daf5386b3aded931
   - enabled: 1
+    path: Assets/Game_Scene/Ending.unity
+    guid: 4c365777e69f3414ea9af181157e4a13
+  - enabled: 1
     path: Assets/Game_Scene/GameClear.unity
     guid: cd75e4659da7e9440930ae0822fc1f74

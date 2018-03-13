@@ -48,7 +48,7 @@ public class EnemyManager : MonoBehaviour
         player = parent.GetComponentInChildren<Player>();
         dMn = parent.GetComponentInChildren<DungeonPartManager>();
     }
-    
+
     public void SpawnCounterPlus()
     {
         if ( !player )
@@ -66,7 +66,7 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    public void Spawn(bool raiseStrength, EnemyType fixedType = (EnemyType)(-1))
+    public void Spawn(bool raiseStrength, EnemyType fixedType = (EnemyType)(-1), bool isFarFromPlayer = true)
     {
         // プレイヤーに近すぎない位置をランダムに決定
         Vector3 pos;
@@ -75,7 +75,7 @@ public class EnemyManager : MonoBehaviour
         {
             pos = d_init.GetRandomPos();
             dis = player.pos - pos;
-        } while ( dis.sqrMagnitude < closeFromPlayerRange * closeFromPlayerRange );
+        } while ( isFarFromPlayer && dis.sqrMagnitude < closeFromPlayerRange * closeFromPlayerRange );
 
         // 敵を追加生成
         EnemyAdd(pos, fixedType);
@@ -356,6 +356,7 @@ public class EnemyManager : MonoBehaviour
         public float NormalPower;
         public Vector3 pos;
         public Vector3 charaDir;
+        public bool isSpeakable;
 
         public SavebleEnemyData()
         {
@@ -365,6 +366,7 @@ public class EnemyManager : MonoBehaviour
             NormalPower = 2;
             pos = new Vector3(0, 0, 0);
             charaDir = new Vector3(0, 0, -1);
+            isSpeakable = false;
         }
         public SavebleEnemyData(Enemy enemy)
         {
@@ -374,6 +376,7 @@ public class EnemyManager : MonoBehaviour
             NormalPower = enemy.atkAndDef.NormalPower;
             pos = enemy.pos;
             charaDir = enemy.charaDir;
+            isSpeakable = enemy.isSpeakable;
         }
         /// <summary>
         /// HPなどをセーブデータから設定
@@ -389,6 +392,7 @@ public class EnemyManager : MonoBehaviour
             enemy.sPos = pos;
             enemy.charaDir = charaDir;
             enemy.SetObjectDir();
+            enemy.isSpeakable = isSpeakable;
         }
     }
     public void SaveEnemys()

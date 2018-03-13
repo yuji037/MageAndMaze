@@ -20,10 +20,11 @@ public class PlayerMove : MonoBehaviour
     bool init = false;
 
     UISwitch uiSwitch;
-    EventSceneManager eventSceneMn;
+    EventCanvasManager eventSceneMn;
 
     TutorialManager tutorialMn;
     EnemyManager eneMn;
+    OnGroundObjectManager ogoMn;
 
     private void Awake()
     {
@@ -34,9 +35,10 @@ public class PlayerMove : MonoBehaviour
         moveBtMn = parent.GetComponentInChildren<MoveButtonManager>();
         anim = GetComponent<AnimationChanger>();
         uiSwitch = parent.GetComponentInChildren<UISwitch>();
-        eventSceneMn = parent.GetComponentInChildren<EventSceneManager>();
+        eventSceneMn = parent.GetComponentInChildren<EventCanvasManager>();
         tutorialMn = parent.GetComponentInChildren<TutorialManager>();
         eneMn = parent.GetComponentInChildren<EnemyManager>();
+        ogoMn = parent.GetComponentInChildren<OnGroundObjectManager>();
     }
 
     // Use this for initialization
@@ -150,6 +152,7 @@ public class PlayerMove : MonoBehaviour
     {
         // 階段、水たまり、回復パネル等のIDチェック
         int onFootType = mapMn.onground_exist2D[(int)player.pos.z, (int)player.pos.x];
+        OnGroundObject ogo = ogoMn.GetOnGroundObject(onFootType);
         // 階段
         if ( onFootType == 100 )
         {
@@ -161,7 +164,7 @@ public class PlayerMove : MonoBehaviour
         }
 
         // 回復パネル
-        if ( onFootType == 301 )
+        if ( ogo && ogo.type == OnGroundObject.Type.HEAL_PANEL )
         {
             player.HealByPercent(0.1f);
         }
@@ -184,9 +187,13 @@ public class PlayerMove : MonoBehaviour
                     var enemy = eneMn.GetEnemy(mapMn.chara_exist2D[z, x]);
                     if ( !enemy.isSpeakable ) continue;
 
-                    // その敵に話しかけられる場合
+                    // その敵に話しかけ可能な場合
                     var npcEventMn = parent.GetComponentInChildren<NPCEventManager>();
-                    npcEventMn.SetEnemyType(enemy.type);
+
+                    // このフロアでもうイベントが終わっている場合
+                    if ( npcEventMn.finishedEventOnThisFloor ) continue;
+
+                    npcEventMn.SetEnemyType(enemy);
 
                     // 「話しかける」ボタンの表示
                     uiSwitch.SwitchSubUI((int)SubUIType.INTERACT, true);

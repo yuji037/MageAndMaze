@@ -65,7 +65,7 @@ public class Obstacle : BattleParticipant
         DeathCheck();
     }
 
-    protected override void DeathCheck()
+    protected override void DeathCheck(bool emitDeathEffect = true)
     {
         if ( HP <= 0 && isAlive )
         {

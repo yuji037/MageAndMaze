@@ -49,7 +49,7 @@ public class Player : BattleParticipant {
 
     public IEnumerator ToGameoverScene()
     {
-        dMn.SaveDataReset();
+        DungeonPartManager.SaveDataReset();
         anim.TriggerAnimator("Dead");
         yield return new WaitForSeconds(2);
         var sceneTransitionManager = parent.GetComponentInChildren<SceneTransitionManager>();
@@ -121,7 +121,7 @@ public class Player : BattleParticipant {
     public override void ParamChangeByTurn()
     {
         hpRegene += MaxHP * 0.02f;
-        mpRegene += MaxMP * 0.06f;
+        mpRegene += MaxMP * (0.02f + 0.03f * (30 - Level) / 30.0f);
 
         float hpRege = Mathf.Floor(hpRegene);
         float mpRege = Mathf.Floor(mpRegene);
@@ -209,7 +209,7 @@ public class Player : BattleParticipant {
 
     public void DebugExpGet()
     {
-        ExpGet(300);
+        ExpGet(50);
     }
 
     public void DebugHeal()
@@ -259,13 +259,13 @@ public class Player : BattleParticipant {
         switch( (SkillBase.TYPE) type )
         {
             case SkillBase.TYPE.FLAME:
-                atkAndDef.FlameMagicPower *= 1.1f;
+                atkAndDef.FlameMagicPower += 0.1f;
                 break;
             case SkillBase.TYPE.LIGHTNING:
-                atkAndDef.LightMagicPower *= 1.1f;
+                atkAndDef.LightMagicPower += 0.1f;
                 break;
             case SkillBase.TYPE.ICE:
-                atkAndDef.IceMagicPower *= 1.1f;
+                atkAndDef.IceMagicPower += 0.1f;
                 break;
         }
     }
