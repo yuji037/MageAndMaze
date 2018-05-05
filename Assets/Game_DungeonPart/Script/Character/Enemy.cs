@@ -323,6 +323,7 @@ public class Enemy : BattleParticipant
                 KillReward();
             }
             mapMn.SetCharaExistInfo(sPos);
+            // 死亡時にラグドールなどを出したい場合
             foreach ( GameObject deadObj in deadObjPrefab )
             {
                 var obj = Instantiate(deadObj);
@@ -366,7 +367,6 @@ public class Enemy : BattleParticipant
         thisTurnAction.RemoveAt(0);
 
         actStarted = false;
-        actAllowed = false;
 
     }
     

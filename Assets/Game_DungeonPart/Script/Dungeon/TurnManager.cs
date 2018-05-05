@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 戦闘する全キャラのターン管理クラス
+/// 戦闘する全キャラのターン管理クラス。
+/// タイミングに合わせて、各Actionの開始を指示する
 /// </summary>
 public class TurnManager : MonoBehaviour {
     
-
     [SerializeField]
     public bool PlayerActionSelected { get; private set; }
     [SerializeField]
@@ -51,11 +51,6 @@ public class TurnManager : MonoBehaviour {
         inactiveFarMn = parent.GetComponentInChildren<InactiveFarManager>();
         tutorialMn = parent.GetComponentInChildren<TutorialManager>();
         turnTable = new List<ActionData>();
-    }
-
-    // Use this for initialization
-    void Start () {
-
     }
 
     public void PlayerActSelect()
@@ -262,7 +257,6 @@ public class TurnManager : MonoBehaviour {
         // セーブ
         Debug.Log("セーブ（ターン経過による）");
         player.SavePlayerInfo();
-        // ↓重いかもしれないので外した方がいいかも
         player.SaveSkill();
         mapMn.Save(1);
         miniMap.SaveRevealedMap();

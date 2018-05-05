@@ -34,9 +34,7 @@ public class BattleParticipant : MonoBehaviour {
     [SerializeField] public int existRoomNum { get { return mapMn.dung_room_info2D[(int)sPos.z, (int)sPos.x]; } }
     [SerializeField] protected ActionData nowAct;
     public BattleParticipant target;
-    public bool actAllowed = false;
     public bool actStarted = false;
-    public bool acted = false;
     public AtkAndDef atkAndDef = null;
     public AbnormalState abnoState = new AbnormalState();
     protected GameObject[] abnoEffect = new GameObject[5];

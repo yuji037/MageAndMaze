@@ -296,7 +296,6 @@ public class EnemyManager : MonoBehaviour
         foreach ( Enemy ene in enemys )
         {
             ene.perpetrator = null;
-            ene.actAllowed = false;
             ene.UpdateAbnoParam();
             ene.UpdateAbnoEffect();
             //ene.acted = false;
