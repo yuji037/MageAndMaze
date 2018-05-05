@@ -47,8 +47,12 @@ public class ArcherSpecialAttack : NPCSkill {
 
         if ( isPlayPerformance )
         {
-            anim.TriggerAnimator("Special");
-            yield return new WaitForSeconds(1.3f);
+            // 弓のモーションの開始が遅いので途中開始するようにした
+            //anim.TriggerAnimator("Special");
+            thisChara.GetComponent<Animator>().CrossFade("Special", 0.3f, 0, 0.5f);
+            yield return new WaitForSeconds(0.3f);
+
+            // 矢をInstantiateして飛ばす。Bodyの方の矢のメッシュを切る
             bodyArrow = thisChara.GetComponentInChildren<Arrow>().GetComponent<MeshRenderer>();
             if ( bodyArrow ) bodyArrow.enabled = false;
             var arrow = Instantiate(effect, transform);
@@ -76,7 +80,7 @@ public class ArcherSpecialAttack : NPCSkill {
         // 後始末
         if ( isPlayPerformance )
         {
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(0.2f);
             if ( bodyArrow ) bodyArrow.enabled = true;
         }
         Destroy(gameObject);

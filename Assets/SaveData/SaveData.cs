@@ -207,6 +207,7 @@ public class SaveData
     public static void Save()
     {
         Savedatabase.Save();
+        //Debug.Log(GetInt("IsTutorialON", 1));
     }
 
     #endregion

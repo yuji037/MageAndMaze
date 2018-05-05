@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class InactiveFarManager : MonoBehaviour {
 
+    public bool IsActive = true;
     public List<InactiveFarFromPlayer> objects = new List<InactiveFarFromPlayer>();
 
     private void Start()
@@ -13,6 +14,8 @@ public class InactiveFarManager : MonoBehaviour {
 
     public void UpdateInactivateObjects()
     {
+        if ( !IsActive ) return;
+
         foreach(InactiveFarFromPlayer obj in objects )
         {
             if ( obj )

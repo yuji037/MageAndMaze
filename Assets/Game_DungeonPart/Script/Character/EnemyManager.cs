@@ -39,6 +39,8 @@ public class EnemyManager : MonoBehaviour
     Player player = null;
     [SerializeField] float closeFromPlayerRange = 7;
 
+    [SerializeField] GameObject deathEffect;
+
     // Use this for initialization
     void Start()
     {
@@ -46,7 +48,7 @@ public class EnemyManager : MonoBehaviour
         player = parent.GetComponentInChildren<Player>();
         dMn = parent.GetComponentInChildren<DungeonPartManager>();
     }
-    
+
     public void SpawnCounterPlus()
     {
         if ( !player )
@@ -59,21 +61,27 @@ public class EnemyManager : MonoBehaviour
         {
             spawnCounter = 0;
             Spawn(true);
+            // ポップする間隔は10ターンまで短くなる
+            spawnFrequency = Mathf.Max(spawnFrequency - 1, 10);
         }
     }
 
-    public void Spawn(bool gainStrength)
+    public void Spawn(bool raiseStrength, EnemyType fixedType = (EnemyType)(-1), bool isFarFromPlayer = true)
     {
+        // プレイヤーに近すぎない位置をランダムに決定
         Vector3 pos;
         Vector3 dis;
         do
         {
             pos = d_init.GetRandomPos();
             dis = player.pos - pos;
-        } while ( dis.sqrMagnitude < closeFromPlayerRange * closeFromPlayerRange );
+        } while ( isFarFromPlayer && dis.sqrMagnitude < closeFromPlayerRange * closeFromPlayerRange );
 
-        EnemyAdd(pos);
-        if (gainStrength) gainningStrength = Mathf.Min(gainningStrength + 0.3f, 3.0f);
+        // 敵を追加生成
+        EnemyAdd(pos, fixedType);
+
+        // ターン経過による、生成敵の強さ上昇
+        if (raiseStrength) gainningStrength = Mathf.Min(gainningStrength + 0.3f, 3.0f);
     }
 
     public void SetSpawnTable()
@@ -150,7 +158,7 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    public Enemy EnemyAdd(Vector3 posi, bool isFixedEnemy = false, EnemyType fixedType = (EnemyType)(-1))
+    public Enemy EnemyAdd(Vector3 posi, EnemyType fixedType = (EnemyType)(-1))
     {
         if ( posi.x < 0 ) return null;
         if ( spawnTable == null )
@@ -169,12 +177,7 @@ public class EnemyManager : MonoBehaviour
 
         GameObject newEnemyObj;
         // 敵の種類選択
-        if ( isFixedEnemy )
-        {
-            newEnemyObj = Instantiate(enemyPrefab[8], characterParent.transform);
-            Debug.Log("ボス選択");
-        }
-        else if( fixedType != (EnemyType)( -1 ) )
+        if( fixedType != (EnemyType)( -1 ) )
         {
             newEnemyObj = Instantiate(enemyPrefab[(int)fixedType], characterParent.transform);
         }
@@ -216,7 +219,7 @@ public class EnemyManager : MonoBehaviour
         enemys.Add(newEne);
         newEne.Init();
 
-        if (!isFixedEnemy) SetStrength(newEne);
+        if (fixedType != EnemyType.BOSS1) SetStrength(newEne);
 
         return newEne;
     }
@@ -270,11 +273,6 @@ public class EnemyManager : MonoBehaviour
         enemy.RewardExp = Mathf.FloorToInt(strengthTable[level][3] / gainningStrength);
     }
 
-    public void DamageParameter()
-    {
-
-    }
-
     public void EnemyActionSelect()
     {
         // 2倍回数行動まで想定されるので3回 SelectAction を呼ぶ
@@ -298,7 +296,6 @@ public class EnemyManager : MonoBehaviour
         foreach ( Enemy ene in enemys )
         {
             ene.perpetrator = null;
-            ene.actAllowed = false;
             ene.UpdateAbnoParam();
             ene.UpdateAbnoEffect();
             //ene.acted = false;
@@ -316,11 +313,11 @@ public class EnemyManager : MonoBehaviour
             }
         }
     }
-    public Enemy GetEnemy(int num)
+    public Enemy GetEnemy(int idNum)
     {
         foreach ( Enemy ene in enemys )
         {
-            if ( ene.idNum == num )
+            if ( ene.idNum == idNum )
             {
                 return ene;
             }
@@ -328,10 +325,17 @@ public class EnemyManager : MonoBehaviour
         return null;
     }
 
+    public void EmitDeathEffect(Vector3 pos)
+    {
+        Instantiate(deathEffect, pos, transform.rotation, characterParent.transform);
+    }
+
     public void DestroyCheck()
     {
         for ( int i = enemys.Count - 1; i >= 0; i-- )
         {
+            if ( enemys[i].type == EnemyType.BOSS1 ) continue;
+
             if ( !enemys[i].IsAlive )
             {
                 var ene = enemys[i];
@@ -351,6 +355,7 @@ public class EnemyManager : MonoBehaviour
         public float NormalPower;
         public Vector3 pos;
         public Vector3 charaDir;
+        public bool isSpeakable;
 
         public SavebleEnemyData()
         {
@@ -360,6 +365,7 @@ public class EnemyManager : MonoBehaviour
             NormalPower = 2;
             pos = new Vector3(0, 0, 0);
             charaDir = new Vector3(0, 0, -1);
+            isSpeakable = false;
         }
         public SavebleEnemyData(Enemy enemy)
         {
@@ -369,6 +375,7 @@ public class EnemyManager : MonoBehaviour
             NormalPower = enemy.atkAndDef.NormalPower;
             pos = enemy.pos;
             charaDir = enemy.charaDir;
+            isSpeakable = enemy.isSpeakable;
         }
         /// <summary>
         /// HPなどをセーブデータから設定
@@ -384,6 +391,7 @@ public class EnemyManager : MonoBehaviour
             enemy.sPos = pos;
             enemy.charaDir = charaDir;
             enemy.SetObjectDir();
+            enemy.isSpeakable = isSpeakable;
         }
     }
     public void SaveEnemys()
@@ -396,7 +404,7 @@ public class EnemyManager : MonoBehaviour
         SaveData.SetList<SavebleEnemyData>("EnemysData", enemysData);
 
         // EnemyManager の情報セーブ
-        SaveData.SetFloat("EnemyGainningStrength", gainningStrength);
+        SaveData.SetFloat("EnemyGainningStrength", 1f);
         SaveData.SetInt("EnemySpawnCounter", spawnCounter);
     }
     public void LoadEnemys()
@@ -425,8 +433,7 @@ public class EnemyManager : MonoBehaviour
 
             Enemy newEne = newEnemyObj.GetComponent<Enemy>();
             SetStrength(newEne);
-            int ID = enemyID - (( type == EnemyType.NPC1 ) ? 100 : 0);
-            newEne.SetStartParam(ID, data.pos);
+            newEne.SetStartParam(enemyID, data.pos);
             newEne.Init();
             // HPなど代入
             data.Load(newEne);
@@ -439,19 +446,15 @@ public class EnemyManager : MonoBehaviour
         spawnCounter = SaveData.GetInt("EnemySpawnCounter", 0);
     }
 
-    //float length = 5;
-
-    //void func()
-    //{
-    //    float disMag = dis.magnitude;
-
-    //    // 上の入力があったら
-    //    disMag = Mathf.Clamp(disMag - 0.02f, 2, 8);
-    //    // 
-    //    disMag = Mathf.Clamp(disMag + 0.02f, 2, 8);
-
-
-    //    camera.transform.position = transform.position + disnormal * disMag;
-
-    //}
+    public void NonPatrolMode()
+    {
+        foreach(Enemy ene in enemys )
+        {
+            var targetPlayerMove = ene.GetComponent<TargetPlayerMove>();
+            if ( targetPlayerMove )
+            {
+                targetPlayerMove.PatrolMode = false;
+            }
+        }
+    }
 }

@@ -34,17 +34,6 @@ public class InventryInfo : MonoBehaviour {
         }
         popUpDesctiption.SetActive(false);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-        //// 暫定的に
-        //timeCount += Time.deltaTime;
-        //if(timeCount > 1 )
-        //{
-        //    timeCount = 0;
-        //    UpdateInventry();
-        //}
-	}
 
     public void UpdateInventry()
     {

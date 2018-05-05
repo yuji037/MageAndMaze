@@ -32,6 +32,8 @@ public class Player : BattleParticipant {
 
     public List<ActionData> thisTurnAction = new List<ActionData>();
 
+    [SerializeField] GameObject effect_LevelUp;
+
     public override void Init()
     {
         idNum = 1;
@@ -47,9 +49,12 @@ public class Player : BattleParticipant {
 
     public IEnumerator ToGameoverScene()
     {
-        dMn.SaveDataReset();
+        DungeonPartManager.SaveDataReset();
         anim.TriggerAnimator("Dead");
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(2);
+        var sceneTransitionManager = parent.GetComponentInChildren<SceneTransitionManager>();
+        if ( sceneTransitionManager )
+            yield return StartCoroutine(sceneTransitionManager.FadeOut());
         UnityEngine.SceneManagement.SceneManager.LoadScene("GameOver");
     }
 
@@ -73,7 +78,7 @@ public class Player : BattleParticipant {
         }
         if ( HP < 0 ) HP = 0;
         anim.TriggerAnimator("Damaged");
-        dmgEffMn.CreateDamagerText(sPos, damage * -1);
+        dmgEffMn.CreateEffectText(sPos, damage);
     }
 
     int preLevel = 0;
@@ -96,6 +101,15 @@ public class Player : BattleParticipant {
     {
         MaxHP = expTable.GetHP(Level);
         MaxMP = expTable.GetMP(Level);
+        StartCoroutine(LevelUpEffect());
+    }
+
+    IEnumerator LevelUpEffect()
+    {
+        effect_LevelUp.SetActive(true);
+        anim.TriggerAnimator("Pleasure");
+        yield return new WaitForSeconds(1);
+
     }
 
     public bool MpUseSkill(int useMp)
@@ -107,7 +121,7 @@ public class Player : BattleParticipant {
     public override void ParamChangeByTurn()
     {
         hpRegene += MaxHP * 0.02f;
-        mpRegene += MaxMP * 0.06f;
+        mpRegene += MaxMP * (0.02f + 0.03f * (30 - Level) / 30.0f);
 
         float hpRege = Mathf.Floor(hpRegene);
         float mpRege = Mathf.Floor(mpRegene);
@@ -195,7 +209,7 @@ public class Player : BattleParticipant {
 
     public void DebugExpGet()
     {
-        ExpGet(300);
+        ExpGet(50);
     }
 
     public void DebugHeal()
@@ -206,10 +220,10 @@ public class Player : BattleParticipant {
 
     public void DebugSoulStone()
     {
-        PlayerItem itMn = GetComponent<PlayerItem>();
-        itMn.items[0].kosuu += Random.Range(1, 30);
-        itMn.items[1].kosuu += Random.Range(1, 30);
-        itMn.items[2].kosuu += Random.Range(1, 30);
+        ItemGet itemGet = GetComponent<ItemGet>();
+        itemGet.AcquireSoulStone(0, Random.Range(1, 30));
+        itemGet.AcquireSoulStone(1, Random.Range(1, 30));
+        itemGet.AcquireSoulStone(2, Random.Range(1, 30));
     }
 
     public void PlayerActSelect()
@@ -245,13 +259,13 @@ public class Player : BattleParticipant {
         switch( (SkillBase.TYPE) type )
         {
             case SkillBase.TYPE.FLAME:
-                atkAndDef.FlameMagicPower *= 1.1f;
+                atkAndDef.FlameMagicPower += 0.1f;
                 break;
             case SkillBase.TYPE.LIGHTNING:
-                atkAndDef.LightMagicPower *= 1.1f;
+                atkAndDef.LightMagicPower += 0.1f;
                 break;
             case SkillBase.TYPE.ICE:
-                atkAndDef.IceMagicPower *= 1.1f;
+                atkAndDef.IceMagicPower += 0.1f;
                 break;
         }
     }

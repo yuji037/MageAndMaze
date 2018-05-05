@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 戦闘する全キャラのターン管理クラス
+/// 戦闘する全キャラのターン管理クラス。
+/// タイミングに合わせて、各Actionの開始を指示する
 /// </summary>
 public class TurnManager : MonoBehaviour {
     
-
     [SerializeField]
     public bool PlayerActionSelected { get; private set; }
     [SerializeField]
@@ -27,9 +27,16 @@ public class TurnManager : MonoBehaviour {
     ObstacleManager obsMn;
     OnGroundObjectManager ogoMn;
     InactiveFarManager inactiveFarMn;
+    TutorialManager tutorialMn;
 
     [SerializeField]
     bool outDebugLog = false;
+
+    int saveTurnCount = 4;
+
+    // （30Fでは）ステージボスのHPを監視
+    [SerializeField]
+    Enemy boss = null;
 
     private void Awake()
     {
@@ -42,12 +49,8 @@ public class TurnManager : MonoBehaviour {
         obsMn = parent.GetComponentInChildren<ObstacleManager>();
         ogoMn = parent.GetComponentInChildren<OnGroundObjectManager>();
         inactiveFarMn = parent.GetComponentInChildren<InactiveFarManager>();
+        tutorialMn = parent.GetComponentInChildren<TutorialManager>();
         turnTable = new List<ActionData>();
-    }
-
-    // Use this for initialization
-    void Start () {
-
     }
 
     public void PlayerActSelect()
@@ -55,6 +58,13 @@ public class TurnManager : MonoBehaviour {
         // すでに行動選択が終わっている場合は無意味
         if ( PlayerActionSelected ) return;
         PlayerActionSelected = true;
+
+        // ステージボスがいる場合はボスを検出
+        foreach(Enemy enemy in eneMn.enemys )
+        {
+            var _boss = enemy.gameObject.GetComponent<StageBoss>();
+            if ( _boss ) boss = enemy;
+        }
 
         eneMn.EnemyActionSelect();
 
@@ -199,22 +209,16 @@ public class TurnManager : MonoBehaviour {
                 // 死亡した敵がいるか確認
                 DeathCheck();
                 // ターン経過での敵スポーン
-                eneMn.SpawnCounterPlus();
+                if ( !tutorialMn.IsTutorialON )
+                {
+                    eneMn.SpawnCounterPlus();
+                }
 
                 miniMap.MiniMapUpdate();
                 inactiveFarMn.UpdateInactivateObjects();
 
                 // セーブ
-                player.SavePlayerInfo();
-                // ↓重いかもしれないので外した方がいいかも
-                player.SaveSkill();
-                mapMn.Save(1);
-                miniMap.SaveRevealedMap();
-                eneMn.SaveEnemys();
-                obsMn.SaveObstacleData();
-                ogoMn.SaveOnGroundObjectData();
-
-                SaveData.Save();
+                SaveTurnCheck();
 
                 yield break;
             }
@@ -223,47 +227,50 @@ public class TurnManager : MonoBehaviour {
         }
     }
 
+    private void Update()
+    {
+        if ( boss )
+        {
+            if (boss.HP <= 0 )
+            {
+                // プレイヤー行動不可
+                PlayerActionSelected = true;
+            }
+        }
+    }
+
+    public void SaveTurnCheck()
+    {
+        // チュートリアル中はセーブしない
+        if ( tutorialMn.IsTutorialON ) return;
+
+        saveTurnCount++;
+        if ( saveTurnCount >= 5 )
+        {
+            saveTurnCount = 0;
+            DungeonSave();
+        }
+    }
+
+    public void DungeonSave()
+    {
+        // セーブ
+        Debug.Log("セーブ（ターン経過による）");
+        player.SavePlayerInfo();
+        player.SaveSkill();
+        mapMn.Save(1);
+        miniMap.SaveRevealedMap();
+        eneMn.SaveEnemys();
+        obsMn.SaveObstacleData();
+        ogoMn.SaveOnGroundObjectData();
+
+        SaveData.Save();
+    }
+
     public void DeathCheck()
     {
         eneMn.DestroyCheck();
         obsMn.DestroyCheck();
-        //bool ok = false;
-        // 死んだ敵がリストから全く居なくなると ok = true になる
-
-        //while ( !ok )
-        //{
-        //    foreach ( Enemy ene in eneMn.enemys )
-        //    {
-        //        ok = false;
-        //        if ( !ene.IsAlive )
-        //        {
-        //            eneMn.EnemyRemove(ene.idNum);
-        //            Destroy(ene.gameObject);
-        //            //SetLastEnemy();
-        //            break;
-        //        }
-        //        ok = true;
-        //    }
-        //    if ( eneMn.enemys.Count == 0 )
-        //    {
-        //        ok = true;
-        //    }
-        //    foreach (Obstacle obs in obsMn.obstacleList )
-        //    {
-        //        ok = false;
-        //        if ( !obs.IsAlive )
-        //        {
-        //            obsMn.RemoveObstacle(obs.idNum);
-        //            Destroy(obs.gameObject);
-        //            break;
-        //        }
-        //        ok = true;
-        //    }
-        //    if ( obsMn.obstacleList.Count == 0 )
-        //    { 
-        //        ok = true;
-        //    }
-        //}
     }
 
     public void AddAction(ActionData addAction)

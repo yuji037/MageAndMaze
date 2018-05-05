@@ -1,11 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System.IO;
 public class PlayerItem : MonoBehaviour
 {
     public Dictionary<int, ItemData> items = new Dictionary<int, ItemData>();
     public enum stone{ RED_STONE,YELLOW_STONE,BLUE_STONE};
+    [SerializeField] GameObject getTextParent;
+    [SerializeField] GameObject getText;
+
     // Use this for initialization
     void Awake()
     {
@@ -41,6 +45,35 @@ public class PlayerItem : MonoBehaviour
     void Update()
     {
 
+    }
+
+    public void GetItem(int ID, int count)
+    {
+        ItemData data;
+        if ( !items.TryGetValue(ID, out data) ) return;
+
+        // アイテムの増減（0より小さくならないように）
+        data.kosuu = Mathf.Max(data.kosuu + count, 0);
+
+        var obj = Instantiate(getText, getTextParent.transform);
+        var _text = obj.GetComponentInChildren<Text>();
+        _text.text = ((count >= 0) ? "+" : "-") + data.name + "×" + count;
+        _text.color = ( count >= 0 ) ? new Color(0, 1, 0) : new Color(1, 0, 0);
+        StartCoroutine(FadeOutCoroutine(_text));
+    }
+
+    IEnumerator FadeOutCoroutine(Text text)
+    {
+        Color color = text.color;
+        yield return new WaitForSeconds(1);
+
+        for (float t = 0; t < 1; t+= Time.deltaTime )
+        {
+            text.color = new Color(color.r, color.g, color.b, ( 1 - t ));
+            text.transform.localPosition = new Vector3(0, t * 50, 0);
+            yield return null;
+        }
+        Destroy(text.transform.parent.gameObject);
     }
 
     [System.Serializable]

@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 65567595341056228}
   - component: {fileID: 23247786523346952}
   - component: {fileID: 114265843273781986}
+  - component: {fileID: 114735181282268642}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -41,6 +42,7 @@ GameObject:
   - component: {fileID: 198341018022458796}
   - component: {fileID: 199117936276712808}
   - component: {fileID: 114013536412334922}
+  - component: {fileID: 114935726263637324}
   m_Layer: 0
   m_Name: Particle System
   m_TagString: Untagged
@@ -59,6 +61,7 @@ GameObject:
   - component: {fileID: 114825130558014028}
   - component: {fileID: 114259476310255408}
   - component: {fileID: 114609024947036782}
+  - component: {fileID: 114242687100818414}
   m_Layer: 0
   m_Name: bomb
   m_TagString: Untagged
@@ -85,8 +88,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1508440320170730}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2, y: 0, z: -2}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 2, y: 0, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4635431012301052}
@@ -169,6 +172,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0799a5f586335694eb096e62e182eace, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114242687100818414
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1508440320170730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a8c389800d269c4bba91becb914f2e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  distanceInvisible: 10
 --- !u!114 &114259476310255408
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -214,6 +229,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   distanceInvisible: 7
+--- !u!114 &114735181282268642
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1325062724430990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0799a5f586335694eb096e62e182eace, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114825130558014028
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -233,6 +259,7 @@ MonoBehaviour:
   HP: 10
   MaxHP: 10
   action: 0
+  skillNum: -1
   actionGauge: 0
   hpGaugeShowTimeMax: 2
   moveVec: {x: 0, y: 0, z: 0}
@@ -255,6 +282,18 @@ MonoBehaviour:
   type: 2
   skills:
   - {fileID: 1521587051751740, guid: be3cb283c1632aa4cbebefc93804daab, type: 2}
+  myBodys: []
+--- !u!114 &114935726263637324
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1357014498067032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0799a5f586335694eb096e62e182eace, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!198 &198341018022458796
 ParticleSystem:
   m_ObjectHideFlags: 1

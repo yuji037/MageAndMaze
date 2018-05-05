@@ -10,12 +10,14 @@ public class EventTriggerCameraRotater : EventTrigger{
     CameraManager cameraMn;
     GameObject moveButtonsParent;
     GameObject minimapCenter;
-    float selectRotateY = 0;
+    public float selectRotateY = 0;
     float[] cameraPosRotateY = { 0,90,180,270,360 };
     bool isDrag;
+    TutorialManager tutorialMn;
 
     // Use this for initialization
     void Start () {
+        if ( parent ) return;
         parent = GameObject.Find("GameObjectParent");
         cameraParent = parent.GetComponentInChildren<MainCameraParent>().gameObject;
         cameraMn = parent.GetComponentInChildren<CameraManager>();
@@ -42,9 +44,7 @@ public class EventTriggerCameraRotater : EventTrigger{
                         selectRotateY = rotY;
                         _minDeltaR = _deltaR;
                     }
-                    float _moveButtonRotate = selectRotateY - moveButtonsParent.transform.eulerAngles.z;
-                    moveButtonsParent.transform.Rotate(0, 0, _moveButtonRotate);
-                    minimapCenter.transform.Rotate(0, 0, _moveButtonRotate);
+                    RotateMoveButtonsAndMiniMap(selectRotateY);
                 }
             }
             else
@@ -64,6 +64,15 @@ public class EventTriggerCameraRotater : EventTrigger{
             StartCoroutine(ZoomInOut());
         }
 	}
+
+    public void RotateMoveButtonsAndMiniMap(float _selectRotateY)
+    {
+        if ( !parent ) Start();
+        selectRotateY = _selectRotateY;
+        float _moveButtonRotate = _selectRotateY - moveButtonsParent.transform.eulerAngles.z;
+        moveButtonsParent.transform.Rotate(0, 0, _moveButtonRotate);
+        minimapCenter.transform.Rotate(0, 0, _moveButtonRotate);
+    }
 
     public override void OnPointerDown(PointerEventData eventData)
     {

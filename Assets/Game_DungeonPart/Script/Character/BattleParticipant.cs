@@ -20,6 +20,7 @@ public class BattleParticipant : MonoBehaviour {
     public int HP;
     public int MaxHP;
     public ActionType action = ActionType.NON_ACTION;
+    public int skillNum = -1;
     [SerializeField] public float actionGauge = 0;
     Gauge3D hpGauge;
     [SerializeField]
@@ -33,15 +34,13 @@ public class BattleParticipant : MonoBehaviour {
     [SerializeField] public int existRoomNum { get { return mapMn.dung_room_info2D[(int)sPos.z, (int)sPos.x]; } }
     [SerializeField] protected ActionData nowAct;
     public BattleParticipant target;
-    public bool actAllowed = false;
     public bool actStarted = false;
-    public bool acted = false;
     public AtkAndDef atkAndDef = null;
     public AbnormalState abnoState = new AbnormalState();
     protected GameObject[] abnoEffect = new GameObject[5];
     [SerializeField] protected List<GameObject> deadObjPrefab;
 
-    protected DamageEffectManager dmgEffMn;
+    protected EffectTextManager dmgEffMn;
 
     protected Player player;
 
@@ -101,8 +100,14 @@ public class BattleParticipant : MonoBehaviour {
             default:
                 break;
         }
-        dmgEffMn.CreateDamagerText(pos, damage * -1);
+        dmgEffMn.CreateEffectText(pos, damage);
         DeathCheck();
+    }
+
+    public virtual void Kill(bool emitDeathEffect = true)
+    {
+        HP = 0;
+        DeathCheck(emitDeathEffect);
     }
 
     public virtual void Init()
@@ -113,7 +118,7 @@ public class BattleParticipant : MonoBehaviour {
         parent = GameObject.Find("GameObjectParent");
         mapMn = parent.GetComponentInChildren<MapManager>();
         turnMn = parent.GetComponentInChildren<TurnManager>();
-        dmgEffMn = parent.GetComponentInChildren<DamageEffectManager>();
+        dmgEffMn = parent.GetComponentInChildren<EffectTextManager>();
         pos = transform.position;
         sPos = pos;
         if ( hpGauge ) hpGauge.isActive = false;
@@ -152,7 +157,7 @@ public class BattleParticipant : MonoBehaviour {
 
     }
 
-    protected virtual void DeathCheck()
+    protected virtual void DeathCheck(bool emitDeathEffect = true)
     {
         if ( HP <= 0 && isAlive )
         {
@@ -168,6 +173,7 @@ public class BattleParticipant : MonoBehaviour {
     public void HealByPercent(float rate)
     {
         int healValue = (int)Mathf.Floor(MaxHP * rate);
+        Debug.Log("Heal : " + healValue);
         HP = Mathf.Min(HP + healValue, MaxHP);
     }
 

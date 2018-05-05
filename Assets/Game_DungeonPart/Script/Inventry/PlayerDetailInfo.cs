@@ -34,7 +34,7 @@ public class PlayerDetailInfo : MonoBehaviour {
             Start();
         }
         statusText.text =
-                "英魂の洞窟" + dMn.floor + "F\n" +
+                "英魂の霊廟" + dMn.floor + "F\n" +
                 "Level : " + player.Level + "\n" +
                 "EXP : " + player.Exp + "\n" +
                 "HP : " + player.HP + " / " + player.MaxHP + "\n" +

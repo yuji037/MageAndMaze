@@ -47,17 +47,17 @@ public class StraightShot : SkillBase {
             int charaID = mapMn.chara_exist2D[(int)targetP.z, (int)targetP.x];
             int mapID = mapMn.dung_2D[(int)targetP.z, (int)targetP.x];
 
+            if ( mapID == -1 ) //壁があったら
+            {
+                hitPos = targetP - player.charaDir * 0.5f;
+                targetExistPos = targetP;
+                return;
+            }
             if ( 200 <= charaID) //キャラがいたら
             {
                 battleTarget = eneMn.GetEnemy(charaID);
                 if ( !battleTarget ) battleTarget = obsMn.GetObstacle(charaID);
                 hitPos = targetP;
-                targetExistPos = targetP;
-                return;
-            }
-            if (mapID == -1) //壁があったら
-            {
-                hitPos = targetP - player.charaDir * 0.5f;
                 targetExistPos = targetP;
                 return;
             }

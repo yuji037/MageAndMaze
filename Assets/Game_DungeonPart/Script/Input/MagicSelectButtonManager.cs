@@ -8,6 +8,7 @@ public class MagicSelectButtonManager : MonoBehaviour {
     GameObject magicSelectWindow;
     MagicButtonManager magicBtnMn;
 
+
     private void Awake()
     {
         parent = GameObject.Find("GameObjectParent");

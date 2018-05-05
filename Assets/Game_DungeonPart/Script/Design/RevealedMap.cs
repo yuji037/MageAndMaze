@@ -11,6 +11,8 @@ public class RevealedMap : MonoBehaviour {
     GameObject parent;
     MapManager mapMn;
     Player player;
+    UIMiniMap uiMiniMap;
+    InactiveFarManager inactiveFarManager;
 
     [SerializeField]
     public bool revealAll = false;
@@ -34,6 +36,8 @@ public class RevealedMap : MonoBehaviour {
         parent = GameObject.Find("GameObjectParent");
         mapMn = parent.GetComponentInChildren<MapManager>();
         player = parent.GetComponentInChildren<Player>();
+        uiMiniMap = parent.GetComponentInChildren<UIMiniMap>();
+        inactiveFarManager = parent.GetComponentInChildren<InactiveFarManager>();
 
         reveal2D = new bool[MapManager.DUNGEON_HEIGHT, MapManager.DUNGEON_WIDTH];
         if ( 1 == SaveData.GetInt("IsInterrupt", 0) )
@@ -127,6 +131,16 @@ public class RevealedMap : MonoBehaviour {
     public void SwitchDebugMode()
     {
         debugMode = !debugMode;
+
+        inactiveFarManager.IsActive = !debugMode;
+    }
+
+    private void Update()
+    {
+        if ( debugMode )
+        {
+            uiMiniMap.MiniMapUpdate();
+        }
     }
 
     [System.Serializable]

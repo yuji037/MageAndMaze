@@ -9,14 +9,20 @@ EditorBuildSettings:
     path: Assets/Game_Scene/Title.unity
     guid: 05b971c805c43de419ce372fdaec7fc0
   - enabled: 1
+    path: Assets/Game_Scene/Opening.unity
+    guid: c7a292ab94e14e04c8af6b49ee548b53
+  - enabled: 1
     path: Assets/Game_Scene/Dungeon1.unity
     guid: 06cb8da4ae2d5e14d802a9c580f63bbd
   - enabled: 0
-    path: Assets/Game_Scene/Village1.unity
+    path: 
     guid: 09f66ccde7b8a784aad116a759aa3c20
   - enabled: 1
     path: Assets/Game_Scene/GameOver.unity
     guid: 3c1cbf1a07ea16d4daf5386b3aded931
+  - enabled: 1
+    path: Assets/Game_Scene/Ending.unity
+    guid: 4c365777e69f3414ea9af181157e4a13
   - enabled: 1
     path: Assets/Game_Scene/GameClear.unity
     guid: cd75e4659da7e9440930ae0822fc1f74

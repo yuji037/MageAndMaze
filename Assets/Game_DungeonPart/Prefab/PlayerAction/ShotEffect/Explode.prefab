@@ -311,7 +311,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -355,6 +355,7 @@ MonoBehaviour:
   hitEffExistTime: 5
   cameraShake: 1
   shakeMagnitude: 2
+  flyingCurveScale: {x: 0, y: 0, z: 0}
 --- !u!198 &198734336619265264
 ParticleSystem:
   m_ObjectHideFlags: 1

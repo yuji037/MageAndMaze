@@ -42,6 +42,7 @@ public class MagicButtonManager : MonoBehaviour {
             }
             else
             {
+                // スキル番号のセット
                 int skillID = sMn.SetSkills[i];
                 SkillData skill = sMn.Skills[skillID];
                 if (skill != null)

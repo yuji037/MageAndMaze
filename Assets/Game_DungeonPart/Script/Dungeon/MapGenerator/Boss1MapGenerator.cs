@@ -102,7 +102,7 @@ public class Boss1MapGenerator : MapGenerator
                         map2D[Z, X] = 3;
                         break;
                     case "E":
-                        dungeonInitializer.fixedEnemyPos = new Vector3(X, 0, Z);
+                        dungeonInitializer.EnemySet(new Vector3(X, 0, Z), EnemyType.BOSS1);
                         map2D[Z, X] = 3;
                         break;
                     default:

@@ -789,6 +789,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetPos: {x: -1, y: 0, z: 0}
+  PatrolMode: 1
+  NonPatrolSearchRange: 4
 --- !u!114 &114656597001352036
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -833,6 +835,7 @@ MonoBehaviour:
   HP: 0
   MaxHP: 0
   action: 0
+  skillNum: -1
   actionGauge: 0
   hpGaugeShowTimeMax: 1
   moveVec: {x: 0, y: 0, z: 0}
@@ -853,7 +856,7 @@ MonoBehaviour:
   deadObjPrefab: []
   perpetrator: {fileID: 0}
   type: 1
-  myBodys: []
+  isSpeakable: 0
   skills:
   - {fileID: 1561582966766038, guid: 5f1b90968880d9a48a74fa3c9d3d18d9, type: 2}
   - {fileID: 1687831554743970, guid: aa96e237e75b89e4ea407d23fea28772, type: 2}

@@ -20,7 +20,11 @@ public class PlayerMove : MonoBehaviour
     bool init = false;
 
     UISwitch uiSwitch;
-    EventSceneManager eventSceneMn;
+    EventCanvasManager eventSceneMn;
+
+    TutorialManager tutorialMn;
+    EnemyManager eneMn;
+    OnGroundObjectManager ogoMn;
 
     private void Awake()
     {
@@ -31,7 +35,10 @@ public class PlayerMove : MonoBehaviour
         moveBtMn = parent.GetComponentInChildren<MoveButtonManager>();
         anim = GetComponent<AnimationChanger>();
         uiSwitch = parent.GetComponentInChildren<UISwitch>();
-        eventSceneMn = parent.GetComponentInChildren<EventSceneManager>();
+        eventSceneMn = parent.GetComponentInChildren<EventCanvasManager>();
+        tutorialMn = parent.GetComponentInChildren<TutorialManager>();
+        eneMn = parent.GetComponentInChildren<EnemyManager>();
+        ogoMn = parent.GetComponentInChildren<OnGroundObjectManager>();
     }
 
     // Use this for initialization
@@ -55,25 +62,10 @@ public class PlayerMove : MonoBehaviour
     // Update is called once per frame
     public void MoveUpdate()
     {
-
         if ( moveVec != Vector3.zero )
         {
             Move();
         }
-        //if (moveVec == Vector3.zero && resMoveDir != Vector3.zero) // 先行入力があったら
-        //{
-        //    if (!turnMn.PlayerActionSelected 
-        //        && !MoveStart(resMoveDir))
-        //        resMoveDir = Vector3.zero;
-        //    if (moveVec != Vector3.zero)
-        //    {
-        //        //Move();
-        //    }
-        //}
-        //if (player.action >= ActionType.ATTACK)
-        //{
-        //    resMoveDir = Vector3.zero;
-        //}
     }
 
     float actionRate = 0;
@@ -104,6 +96,16 @@ public class PlayerMove : MonoBehaviour
 
     public bool MoveStart(Vector3 dir)   // true ならば 先行入力が有効
     {
+        // チュートリアル中の操作制限
+        if ( tutorialMn.IsTutorialON )
+        {
+            if ( (2 <= tutorialMn.TutorialNumber
+                && tutorialMn.TutorialNumber <= 3)
+                || ( 5 <= tutorialMn.TutorialNumber
+                && tutorialMn.TutorialNumber <= 7 )
+                ) { return false; }
+        }
+
         if ( turnMn.PlayerActionSelected ) return true;
 
         if ( player.abnoState.invincibleTurn > 0 ) return false;
@@ -112,11 +114,14 @@ public class PlayerMove : MonoBehaviour
         player.charaDir = dir;
         player.SetObjectDir();
 
+        Debug.Log("マップ外かどうか");
         // マップ外かどうか
         if ( !mapMn.InsideMap(player.pos + dir) ) return false;
 
+        Debug.Log(" 移動可能な空間かどうか");
         // 移動可能な空間かどうか
         if ( !mapMn.CanMoveCheck(player.pos, player.pos + dir) ) return false;
+        Debug.Log(" 移動可能な空間");
 
         moveBtMn._isActive = false;
         player.sPos = player.pos + dir;
@@ -147,6 +152,7 @@ public class PlayerMove : MonoBehaviour
     {
         // 階段、水たまり、回復パネル等のIDチェック
         int onFootType = mapMn.onground_exist2D[(int)player.pos.z, (int)player.pos.x];
+        OnGroundObject ogo = ogoMn.GetOnGroundObject(onFootType);
         // 階段
         if ( onFootType == 100 )
         {
@@ -158,7 +164,7 @@ public class PlayerMove : MonoBehaviour
         }
 
         // 回復パネル
-        if ( onFootType == 301 )
+        if ( ogo && ogo.type == OnGroundObject.Type.HEAL_PANEL )
         {
             player.HealByPercent(0.1f);
         }
@@ -174,8 +180,22 @@ public class PlayerMove : MonoBehaviour
             {
                 Vector3 checkPos = new Vector3(x, 0, z);
                 if ( !mapMn.InsideMap(checkPos) ) continue;
-                if ( 400 <= mapMn.chara_exist2D[z, x] && mapMn.chara_exist2D[z, x] < 500 )
+                int chara = mapMn.chara_exist2D[z, x];
+                // その場所に居るのが敵キャラならば
+                if ( 500 <= mapMn.chara_exist2D[z, x] )
                 {
+                    var enemy = eneMn.GetEnemy(mapMn.chara_exist2D[z, x]);
+                    if ( !enemy.isSpeakable ) continue;
+
+                    // その敵に話しかけ可能な場合
+                    var npcEventMn = parent.GetComponentInChildren<NPCEventManager>();
+
+                    // このフロアでもうイベントが終わっている場合
+                    if ( npcEventMn.finishedEventOnThisFloor ) continue;
+
+                    npcEventMn.SetEnemyType(enemy);
+
+                    // 「話しかける」ボタンの表示
                     uiSwitch.SwitchSubUI((int)SubUIType.INTERACT, true);
                     return;
                 }

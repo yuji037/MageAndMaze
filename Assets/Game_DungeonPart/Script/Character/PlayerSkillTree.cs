@@ -40,15 +40,8 @@ public class PlayerSkillTree : MonoBehaviour
         }
         // セーブデータのロード
         LoadSkillData();
-        // 序盤のフレイムショットは序盤から覚えておく
+        // 序盤のマジックショットなら最初から覚えておく
         Skills[1].Syutoku = true;
-        Skills[101].Syutoku = true;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     [System.Serializable]

@@ -18,12 +18,14 @@ public class ObstacleManager : MonoBehaviour {
     [SerializeField]
     GameObject charactersParent;
 
-
-    public void Init()
+    private void Awake()
     {
         parent = GameObject.Find("GameObjectParent");
         mapMn = parent.GetComponentInChildren<MapManager>();
+    }
 
+    public void Init()
+    {
         // 中断後の再開であれば 1、新規作成であれば 0
         if ( 1 == SaveData.GetInt("IsInterrupt", 0) )
         {

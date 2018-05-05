@@ -50,7 +50,7 @@ public class UIPlayerInfo : MonoBehaviour {
 
     void UpdatePlayerUI()
     {
-        floorText.text = "英魂の洞窟" + dMn.floor + "F";
+        floorText.text = "英魂の霊廟" + dMn.floor + "F";
 
         hpSlider.value = (float)player.HP / player.MaxHP;
         mpSlider.value = (float)player.MP / player.MaxMP;
