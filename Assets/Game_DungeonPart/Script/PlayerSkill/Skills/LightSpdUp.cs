@@ -7,6 +7,6 @@ public class LightSpdUp : StraightShot
     public override void OnDecided()
     {
         base.OnDecided();
-        player.abnoState.spdUpTurn = Mathf.FloorToInt(abnoEffectPower);
+        player.m_cAbnoState.SetTurn(AbnoStateType.SpdUp, abnoEffectPower);
     }
 }

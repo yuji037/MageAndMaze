@@ -7,6 +7,6 @@ public class FireAtkUp : StraightShot {
     public override void OnDecided()
     {
         base.OnDecided();
-        player.abnoState.atkUpTurn = Mathf.FloorToInt(abnoEffectPower);
+        player.m_cAbnoState.SetTurn(AbnoStateType.AtkUp, abnoEffectPower);
     }
 }

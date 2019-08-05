@@ -63,7 +63,7 @@ public class RevealedMap : MonoBehaviour {
             }
         }
 
-        int _existRoomNum = player.existRoomNum;
+        int _existRoomNum = player.ExistRoomNum;
         if (_existRoomNum < mapMn.max_room )
         {
             // プレイヤーが部屋に居る
@@ -107,7 +107,7 @@ public class RevealedMap : MonoBehaviour {
         if ( z < 0 || z >= MapManager.DUNGEON_HEIGHT
             || x < 0 || x >= MapManager.DUNGEON_WIDTH ) return false;
 
-        int _existRoomNum = player.existRoomNum;
+        int _existRoomNum = player.ExistRoomNum;
         if ( _existRoomNum < mapMn.max_room )
         {
             // プレイヤーが部屋に居る

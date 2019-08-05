@@ -5,7 +5,7 @@ using UnityEngine;
 public class NPCEventManager : MonoBehaviour {
 
     Enemy playerMetEnemy = null;
-    EnemyType playerMetEnemyType;
+    eEnemyType playerMetEnemyType;
 
     GameObject parent;
     EventCanvasManager eventSceneMn;
@@ -64,7 +64,7 @@ public class NPCEventManager : MonoBehaviour {
                 // ランダム敵ポップ
                 for ( i = 0; i < 2; i++ )
                 {
-                    eneMn.Spawn(false, (EnemyType)(-1), false);
+                    eneMn.Spawn(false, (eEnemyType)(-1), false);
                 }
                 for ( i = 2; i < 5; i++ )
                 {
@@ -86,22 +86,22 @@ public class NPCEventManager : MonoBehaviour {
                 // 光源タイプのみポップ
                 for ( i = 0; i < 2; i++ )
                 {
-                    eneMn.Spawn(false, EnemyType.LIGHT, false);
+                    eneMn.Spawn(false, eEnemyType.LIGHT, false);
                 }
                 for ( i = 2; i < 5; i++ )
                 {
-                    eneMn.Spawn(false, EnemyType.LIGHT);
+                    eneMn.Spawn(false, eEnemyType.LIGHT);
                 }
                 break;
             case 33:
                 // 豪華タイプのみポップ
                 for ( i = 0; i < 2; i++ )
                 {
-                    eneMn.Spawn(false, EnemyType.TREASURE, false);
+                    eneMn.Spawn(false, eEnemyType.TREASURE, false);
                 }
                 for ( i = 2; i < 5; i++ )
                 {
-                    eneMn.Spawn(false, EnemyType.TREASURE);
+                    eneMn.Spawn(false, eEnemyType.TREASURE);
                 }
                 break;
             default:

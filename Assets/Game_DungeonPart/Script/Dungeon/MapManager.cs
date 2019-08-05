@@ -293,7 +293,7 @@ public class MapManager : MonoBehaviour
         if (!dark_2D[0, 0]) return;
         if (!player) player = parent.GetComponentInChildren<Player>();
         Vector3 _plPos = player.sPos;
-        int _existRoomNum = player.existRoomNum;
+        int _existRoomNum = player.ExistRoomNum;
         for (var z = 0; z < DUNGEON_HEIGHT; z++)
         {
             for (var x = 0; x < DUNGEON_WIDTH; x++)

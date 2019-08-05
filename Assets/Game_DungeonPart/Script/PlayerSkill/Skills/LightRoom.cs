@@ -33,7 +33,7 @@ public class LightRoom : RoomMagic {
         cameraMn.SetIsBigMagicCamera(false);
         GetComponent<AudioSource>().Play();
         // プレイヤーは部屋に居る
-        if (player.existRoomNum < mapMn.max_room )
+        if (player.ExistRoomNum < mapMn.max_room )
         {
             for (int p = 0; p < _particleMax; p++)
             {

@@ -4,20 +4,33 @@ using UnityEngine;
 
 public enum AbnoStateType
 {
-    FREEZE,
-    PARALIZE,
-
+    Freeze,
+    Paralize,
+	AtkUp,
+	DefUp,
+	Invincible,
+	Transparent,
+	SpdUp,
+	MAX,
 }
 
 [System.Serializable]
 public class AbnormalState {
 
-    public int freezeTurn = 0;
-    public int paralizeTurn = 0;
+	public float[] m_fRemainTurns = new float[(int)AbnoStateType.MAX];
 
-    public int atkUpTurn = 0;
-    public int defUpTurn = 0;
-    public int invincibleTurn = 0;
-    public int transparentTurn = 0;
-    public int spdUpTurn = 0;
+	public float GetTurn(AbnoStateType type)
+	{
+		return m_fRemainTurns[(int)type];
+	}
+
+	public void SetTurn(AbnoStateType type, float turn)
+	{
+		m_fRemainTurns[(int)type] = turn;
+	}
+
+	public void AddTurn(AbnoStateType type, float turn)
+	{
+		m_fRemainTurns[(int)type] += turn;
+	}
 }

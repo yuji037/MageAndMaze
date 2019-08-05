@@ -15,11 +15,10 @@ public class SpecialActAI : MonoBehaviour {
     public void FindLightMonster()
     {
         Player player = parent.GetComponentInChildren<Player>();
-        targetChara = null;
-        targetChara = ( player.abnoState.transparentTurn <= 0 ) ? player : null;
+        targetChara = ( player.m_cAbnoState.GetTurn(AbnoStateType.Transparent) <= 0 ) ? player : null;
         foreach (Enemy ene in eneMn.enemys)
         {
-            if (ene.type == EnemyType.LIGHT)
+            if (ene.type == eEnemyType.LIGHT)
             {
                 // 光るモンスターが近いならそっちをターゲットする
                 int d_x = Mathf.Abs((int)(ene.pos.x - thisChara.pos.x));
@@ -33,9 +32,9 @@ public class SpecialActAI : MonoBehaviour {
                     }
                 }
                 // 光るモンスターが同じ部屋にいるならそっちをターゲットする
-                if (0 <= thisChara.existRoomNum && thisChara.existRoomNum <= mapMn.max_room)
+                if (0 <= thisChara.ExistRoomNum && thisChara.ExistRoomNum <= mapMn.max_room)
                 {
-                    if (ene.existRoomNum == thisChara.existRoomNum)
+                    if (ene.ExistRoomNum == thisChara.ExistRoomNum)
                     {
                         targetChara = ene;
                         break;
@@ -52,15 +51,15 @@ public class SpecialActAI : MonoBehaviour {
 
         Player player = parent.GetComponentInChildren<Player>();
         targetChara = null;
-        targetChara = ( player.abnoState.transparentTurn <= 0 ) ? player : null;
+        targetChara = ( player.m_cAbnoState.GetTurn(AbnoStateType.Transparent) <= 0 ) ? player : null;
 
         if ( !targetChara ) return false;
 
         bool ans = false;
 
-        if (targetChara.existRoomNum >= 0 && targetChara.existRoomNum < mapMn.max_room) // ターゲットが部屋に居る
+        if (targetChara.ExistRoomNum >= 0 && targetChara.ExistRoomNum < mapMn.max_room) // ターゲットが部屋に居る
         {
-            ans = (targetChara.existRoomNum == thisChara.existRoomNum); // プレイヤーと同部屋にいれば発見
+            ans = (targetChara.ExistRoomNum == thisChara.ExistRoomNum); // プレイヤーと同部屋にいれば発見
             if (!ans)
             {
                 int d_x = Mathf.Abs((int)(targetChara.sPos.x - thisChara.pos.x));

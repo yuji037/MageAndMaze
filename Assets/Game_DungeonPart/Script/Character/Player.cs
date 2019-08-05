@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 /// <summary>
 /// プレイヤーのステータス、状態異常の管理
@@ -193,7 +194,7 @@ public class Player : BattleParticipant {
     {
         while ( true )
         {
-            bool isPlayerInRoom = (existRoomNum < mapMn.max_room);
+            bool isPlayerInRoom = (ExistRoomNum < mapMn.max_room);
             float postSpotLightAngle = isPlayerInRoom ? 50 : 35;
             float postPointLightRange = isPlayerInRoom ? 7 : 6;
 
@@ -221,9 +222,9 @@ public class Player : BattleParticipant {
     public void DebugSoulStone()
     {
         ItemGet itemGet = GetComponent<ItemGet>();
-        itemGet.AcquireSoulStone(0, Random.Range(1, 30));
-        itemGet.AcquireSoulStone(1, Random.Range(1, 30));
-        itemGet.AcquireSoulStone(2, Random.Range(1, 30));
+        itemGet.AcquireSoulStone(0, UnityEngine.Random.Range(1, 30));
+        itemGet.AcquireSoulStone(1, UnityEngine.Random.Range(1, 30));
+        itemGet.AcquireSoulStone(2, UnityEngine.Random.Range(1, 30));
     }
 
     public void PlayerActSelect()
@@ -272,80 +273,104 @@ public class Player : BattleParticipant {
 
     public override void UpdateAbnoEffect()
     {
-        // 凍結
-        if ( abnoState.freezeTurn > 0 && abnoEffect[0] == null )
-        {
-            abnoEffect[0] = Instantiate(parent.GetComponentInChildren<AbnormalEffect>().abnoEffect[0]);
-            abnoEffect[0].transform.position = this.transform.position;
-            abnoEffect[0].transform.parent = this.transform;
-            Debug.Log("Freeze!");
-        }
-        if ( abnoState.freezeTurn <= 0 )
-        {
-            if ( abnoEffect[0] ) Destroy(abnoEffect[0]);
-        }
+		for(int i = 0; i < (int)AbnoStateType.MAX; ++i )
+		{
+			// 状態異常エフェクトの更新
+			if ( m_cAbnoState.m_fRemainTurns[i] > 0 && m_poAbnoEffects[i] == null )
+			{
+				var oEffectPrefab = parent.GetComponentInChildren<AbnormalEffect>().abnoEffect[i];
+				if ( oEffectPrefab == null ) continue;
 
-        // 感電
-        if ( abnoState.paralizeTurn > 0 && abnoEffect[1] == null )
-        {
-            abnoEffect[1] = Instantiate(parent.GetComponentInChildren<AbnormalEffect>().abnoEffect[1]);
-            abnoEffect[1].transform.position = this.transform.position;
-            abnoEffect[1].transform.parent = this.transform;
-            Debug.Log("Paralize!");
-        }
-        if ( abnoState.paralizeTurn <= 0 )
-        {
-            if ( abnoEffect[1] ) Destroy(abnoEffect[1]);
-        }
+				m_poAbnoEffects[i] = Instantiate(oEffectPrefab);
+				m_poAbnoEffects[i].transform.position	= this.transform.position;
+				m_poAbnoEffects[i].transform.parent		= this.transform;
+				Debug.Log(((AbnoStateType)i).ToString() + "!");
+			}
+			if ( m_cAbnoState.m_fRemainTurns[i] <= 0 )
+			{
+				if ( m_poAbnoEffects[i] ) Destroy(m_poAbnoEffects[i]);
+			}
+		}
 
-        // 攻撃力アップ
-        if ( abnoState.atkUpTurn > 0 && abnoEffect[2] == null )
-        {
-            abnoEffect[2] = Instantiate(parent.GetComponentInChildren<AbnormalEffect>().abnoEffect[2]);
-            abnoEffect[2].transform.position = this.transform.position;
-            abnoEffect[2].transform.parent = this.transform;
-            Debug.Log("AttackUp!");
-        }
-        if ( abnoState.atkUpTurn <= 0 )
-        {
-            if ( abnoEffect[2] ) Destroy(abnoEffect[2]);
-        }
+        //// 凍結
+        //if ( abnoState.freezeTurn > 0 && m_poAbnoEffects[0] == null )
+        //{
+        //    m_poAbnoEffects[0] = Instantiate(parent.GetComponentInChildren<AbnormalEffect>().abnoEffect[0]);
+        //    m_poAbnoEffects[0].transform.position = this.transform.position;
+        //    m_poAbnoEffects[0].transform.parent = this.transform;
+        //    Debug.Log("Freeze!");
+        //}
+        //if ( abnoState.freezeTurn <= 0 )
+        //{
+        //    if ( m_poAbnoEffects[0] ) Destroy(m_poAbnoEffects[0]);
+        //}
 
-        // 無敵化
-        if ( abnoState.invincibleTurn > 0 && abnoEffect[3] == null )
-        {
-            abnoEffect[3] = Instantiate(parent.GetComponentInChildren<AbnormalEffect>().abnoEffect[3]);
-            abnoEffect[3].transform.position = this.transform.position;
-            abnoEffect[3].transform.parent = this.transform;
-            Debug.Log("InvincibleTime!");
-        }
-        if ( abnoState.invincibleTurn <= 0 )
-        {
-            if ( abnoEffect[3] ) Destroy(abnoEffect[3]);
-        }
+        //// 感電
+        //if ( abnoState.paralizeTurn > 0 && m_poAbnoEffects[1] == null )
+        //{
+        //    m_poAbnoEffects[1] = Instantiate(parent.GetComponentInChildren<AbnormalEffect>().abnoEffect[1]);
+        //    m_poAbnoEffects[1].transform.position = this.transform.position;
+        //    m_poAbnoEffects[1].transform.parent = this.transform;
+        //    Debug.Log("Paralize!");
+        //}
+        //if ( abnoState.paralizeTurn <= 0 )
+        //{
+        //    if ( m_poAbnoEffects[1] ) Destroy(m_poAbnoEffects[1]);
+        //}
 
-        // 倍速
-        if ( abnoState.spdUpTurn > 0 && abnoEffect[4] == null )
-        {
-            abnoEffect[4] = Instantiate(parent.GetComponentInChildren<AbnormalEffect>().abnoEffect[4]);
-            abnoEffect[4].transform.position = this.transform.position;
-            abnoEffect[4].transform.parent = this.transform;
-            Debug.Log("SpeedUp!");
-        }
-        if ( abnoState.spdUpTurn <= 0 )
-        {
-            if ( abnoEffect[4] ) Destroy(abnoEffect[4]);
-        }
+        //// 攻撃力アップ
+        //if ( abnoState.atkUpTurn > 0 && m_poAbnoEffects[2] == null )
+        //{
+        //    m_poAbnoEffects[2] = Instantiate(parent.GetComponentInChildren<AbnormalEffect>().abnoEffect[2]);
+        //    m_poAbnoEffects[2].transform.position = this.transform.position;
+        //    m_poAbnoEffects[2].transform.parent = this.transform;
+        //    Debug.Log("AttackUp!");
+        //}
+        //if ( abnoState.atkUpTurn <= 0 )
+        //{
+        //    if ( m_poAbnoEffects[2] ) Destroy(m_poAbnoEffects[2]);
+        //}
+
+        //// 無敵化
+        //if ( abnoState.invincibleTurn > 0 && m_poAbnoEffects[3] == null )
+        //{
+        //    m_poAbnoEffects[3] = Instantiate(parent.GetComponentInChildren<AbnormalEffect>().abnoEffect[3]);
+        //    m_poAbnoEffects[3].transform.position = this.transform.position;
+        //    m_poAbnoEffects[3].transform.parent = this.transform;
+        //    Debug.Log("InvincibleTime!");
+        //}
+        //if ( abnoState.invincibleTurn <= 0 )
+        //{
+        //    if ( m_poAbnoEffects[3] ) Destroy(m_poAbnoEffects[3]);
+        //}
+
+        //// 倍速
+        //if ( abnoState.spdUpTurn > 0 && m_poAbnoEffects[4] == null )
+        //{
+        //    m_poAbnoEffects[4] = Instantiate(parent.GetComponentInChildren<AbnormalEffect>().abnoEffect[4]);
+        //    m_poAbnoEffects[4].transform.position = this.transform.position;
+        //    m_poAbnoEffects[4].transform.parent = this.transform;
+        //    Debug.Log("SpeedUp!");
+        //}
+        //if ( abnoState.spdUpTurn <= 0 )
+        //{
+        //    if ( m_poAbnoEffects[4] ) Destroy(m_poAbnoEffects[4]);
+        //}
     }
 
     public override void UpdateAbnoParam()
     {
-        if ( abnoState.freezeTurn > 0 ) abnoState.freezeTurn--;
-        if ( abnoState.paralizeTurn > 0 ) abnoState.paralizeTurn--;
-        if ( abnoState.atkUpTurn > 0 ) abnoState.atkUpTurn--;
-        if ( abnoState.defUpTurn > 0 ) abnoState.defUpTurn--;
-        if ( abnoState.invincibleTurn > 0 ) abnoState.invincibleTurn--;
-        if ( abnoState.spdUpTurn > 0 ) abnoState.spdUpTurn--;
+		for(int i = 0; i < (int)AbnoStateType.MAX; ++i )
+		{
+			if ( m_cAbnoState.m_fRemainTurns[i] > 0 ) m_cAbnoState.m_fRemainTurns[i] -= 1f;
+		}
+  //      if ( abnoState.freezeTurn > 0 ) abnoState.freezeTurn--;
+  //      if ( abnoState.paralizeTurn > 0 ) abnoState.paralizeTurn--;
+  //      if ( abnoState.atkUpTurn > 0 ) abnoState.atkUpTurn--;
+  //      if ( abnoState.defUpTurn > 0 ) abnoState.defUpTurn--;
+  //      if ( abnoState.invincibleTurn > 0 ) abnoState.invincibleTurn--;
+  //      if ( abnoState.transparentTurn > 0 ) abnoState.transparentTurn--;
+		//if ( abnoState.spdUpTurn > 0 ) abnoState.spdUpTurn--;
     }
 }
 

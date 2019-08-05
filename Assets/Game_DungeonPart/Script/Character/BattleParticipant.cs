@@ -8,41 +8,44 @@ public class BattleParticipant : MonoBehaviour {
     // TurnManager に従って行動する
     // 破壊可能な爆発オブジェクトなどもこれで管理する
 
-    public int idNum;
-    protected bool isAlive = true;
-    public bool IsAlive { get { return isAlive; } }
-    public bool init = false;
+    public		int				idNum;
+    protected	bool			isAlive = true;
+    public		bool			IsAlive { get { return isAlive; } }
+    public		bool			init = false;
     // 移動前の位置
-    public Vector3 pos;
+    public		Vector3			pos;
     // 移動後の位置
-    public Vector3 sPos;
-    public int Level;
-    public int HP;
-    public int MaxHP;
-    public ActionType action = ActionType.NON_ACTION;
-    public int skillNum = -1;
-    [SerializeField] public float actionGauge = 0;
-    Gauge3D hpGauge;
+    public		Vector3			sPos;
+    public		int				Level;
+    public		int				HP;
+    public		int				MaxHP;
+    public		ActionType		action = ActionType.NON_ACTION;
+    public		int				skillNum = -1;
     [SerializeField]
-    float hpGaugeShowTimeMax = 2.0f;
-    public Vector3 moveVec;
-    protected Vector3 moveDir;
-    public Vector3 charaDir = new Vector3(0, 0, -1);
-    protected GameObject parent;
-    protected MapManager mapMn;
-    protected TurnManager turnMn;
-    [SerializeField] public int existRoomNum { get { return mapMn.dung_room_info2D[(int)sPos.z, (int)sPos.x]; } }
-    [SerializeField] protected ActionData nowAct;
-    public BattleParticipant target;
-    public bool actStarted = false;
-    public AtkAndDef atkAndDef = null;
-    public AbnormalState abnoState = new AbnormalState();
-    protected GameObject[] abnoEffect = new GameObject[5];
-    [SerializeField] protected List<GameObject> deadObjPrefab;
+	public		float			actionGauge = 0;
+				Gauge3D			hpGauge;
+    [SerializeField]
+				float			hpGaugeShowTimeMax = 2.0f;
+    public		Vector3			moveVec;
+    protected	Vector3			moveDir;
+    public		Vector3			charaDir = new Vector3(0, 0, -1);
+    protected	GameObject		parent;
+    protected	MapManager		mapMn;
+    protected	TurnManager		turnMn;
+	public		int		ExistRoomNum { get { return mapMn.dung_room_info2D[(int)sPos.z, (int)sPos.x]; } }
+    [SerializeField]
+	protected	ActionData		nowAct;
+    public		BattleParticipant target;
+    public		bool			actStarted = false;
+    public		AtkAndDef		atkAndDef = null;
+    public		AbnormalState	m_cAbnoState = new AbnormalState();
+    protected	GameObject[]	m_poAbnoEffects = new GameObject[(int)AbnoStateType.MAX];
+    [SerializeField]
+	protected	List<GameObject> deadObjPrefab;
 
-    protected EffectTextManager dmgEffMn;
+    protected	EffectTextManager dmgEffMn;
 
-    protected Player player;
+    protected	Player player;
 
     // 自分を攻撃したキャラを覚えておく
     public BattleParticipant perpetrator;
@@ -192,20 +195,20 @@ public class BattleParticipant : MonoBehaviour {
 
     public void CauseAbnormalState(AbnormalStateType type, float effectValue)
     {
-        int calcTurn = 0;
+        float calcTurn = 0;
         if ( atkAndDef )
         {
             calcTurn = atkAndDef.CalcAbnormalTurn(type, effectValue);
         }
-        else calcTurn = Mathf.FloorToInt(effectValue);
+        else calcTurn = effectValue;
 
         switch ( type )
         {
             case AbnormalStateType.FREEZE:
-                abnoState.freezeTurn = calcTurn;
+                m_cAbnoState.SetTurn(AbnoStateType.Freeze, calcTurn);
                 break;
             case AbnormalStateType.PARALIZE:
-                abnoState.paralizeTurn = calcTurn;
+				m_cAbnoState.SetTurn(AbnoStateType.Paralize, calcTurn);
                 break;
         }
     }

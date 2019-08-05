@@ -50,7 +50,7 @@ public class RoomMagic : SkillBase {
     public override List<Vector3> GetRange()
     {
         List<Vector3> rangeList = new List<Vector3>();
-        int _existRoomNum = player.existRoomNum;
+        int _existRoomNum = player.ExistRoomNum;
         int[,] dung_room_info2D = mapMn.dung_room_info2D;
         if ( _existRoomNum < mapMn.max_room )     // 自分が部屋に居る
         {

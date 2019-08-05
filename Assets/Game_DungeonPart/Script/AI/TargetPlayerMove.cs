@@ -18,10 +18,10 @@ public class TargetPlayerMove : AImove {
     {
         Player player = parent.GetComponentInChildren<Player>();
         targetChara = null;
-        targetChara = ( player.abnoState.transparentTurn <= 0 ) ? player : null;
+        targetChara = ( player.m_cAbnoState.GetTurn(AbnoStateType.Transparent) <= 0 ) ? player : null;
         foreach (Enemy ene in eneMn.enemys)
         {
-            if (ene.type == EnemyType.LIGHT)
+            if (ene.type == eEnemyType.LIGHT)
             {
                 // 光るモンスターが近いならそっちをターゲットする
                 int d_x = Mathf.Abs((int)(ene.pos.x - thisChara.pos.x));
@@ -35,9 +35,9 @@ public class TargetPlayerMove : AImove {
                     }
                 }
                 // 光るモンスターが同じ部屋にいるならそっちをターゲットする
-                if (0 <= thisChara.existRoomNum && thisChara.existRoomNum <= mapMn.max_room)
+                if (0 <= thisChara.ExistRoomNum && thisChara.ExistRoomNum <= mapMn.max_room)
                 {
-                    if (ene.existRoomNum == thisChara.existRoomNum)
+                    if (ene.ExistRoomNum == thisChara.ExistRoomNum)
                     {
                         targetChara = ene;
                         break;
@@ -59,12 +59,12 @@ public class TargetPlayerMove : AImove {
         if ( targetChara )
         {
             if ( searchWholeFloor ) targetFind = true;
-            else if ( targetChara.existRoomNum >= 0 && targetChara.existRoomNum < mapMn.max_room )
+            else if ( targetChara.ExistRoomNum >= 0 && targetChara.ExistRoomNum < mapMn.max_room )
             {
                 // ターゲットが部屋に居る
                 // ターゲットと同部屋にいれば発見
-                targetFind = ( targetChara.existRoomNum == thisChara.existRoomNum );
-                if ( !targetFind && thisChara.existRoomNum >= mapMn.max_room )
+                targetFind = ( targetChara.ExistRoomNum == thisChara.ExistRoomNum );
+                if ( !targetFind && thisChara.ExistRoomNum >= mapMn.max_room )
                 {
                     // ターゲットとの距離が近いと発見
                     int d_x = Mathf.Abs((int)( targetChara.sPos.x - thisChara.pos.x ));
@@ -97,11 +97,11 @@ public class TargetPlayerMove : AImove {
                 targetPos.x = -1;   // ←NULLとして扱う
             }
             // 目標地点NULL かつ thisChara が部屋に居て、巡回モードONの場合
-            if ( targetPos.x == -1 && thisChara.existRoomNum >= 0 && thisChara.existRoomNum < mapMn.max_room
+            if ( targetPos.x == -1 && thisChara.ExistRoomNum >= 0 && thisChara.ExistRoomNum < mapMn.max_room
                 && PatrolMode)
             {
                 // 一番遠い出入り口を目標地点に登録
-                Vector3[] gatewayPos = mapMn.room_info[thisChara.existRoomNum].gatewayPos;
+                Vector3[] gatewayPos = mapMn.room_info[thisChara.ExistRoomNum].gatewayPos;
                 float maxDis = 0;
                 int maxNum = 0;
                 float minDis = 100;
@@ -124,7 +124,7 @@ public class TargetPlayerMove : AImove {
                 targetPos = gatewayPos[maxNum];
                 // 元々この部屋に居てtargetPosがnullになったということは
                 // 目的があってここに来た（プレイヤーなどがいた）のでそのまま近い出入り口を登録
-                if ( thisChara.existRoomNum == preExistRoomNum )
+                if ( thisChara.ExistRoomNum == preExistRoomNum )
                 {
                     targetPos = gatewayPos[minNum];
                 }
@@ -206,7 +206,7 @@ public class TargetPlayerMove : AImove {
         Debug.Log("targetFind = " + targetFind);
         if ( !targetChara ) return true;
         targetPos = targetChara.sPos;
-        preExistRoomNum = thisChara.existRoomNum;
+        preExistRoomNum = thisChara.ExistRoomNum;
         Vector3 dis = targetPos - thisChara.sPos;
         if (dis.magnitude < 1.5f) // ルート２以下＝隣接している
         {

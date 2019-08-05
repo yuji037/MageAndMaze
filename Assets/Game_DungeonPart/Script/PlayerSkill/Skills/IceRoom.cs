@@ -13,7 +13,7 @@ public class IceRoom : RoomMagic {
         GetComponent<AudioSource>().Play();
         yield return new WaitForSeconds(0.5f);
         cameraMn.SetIsBigMagicCamera(false);
-        if (player.existRoomNum < mapMn.max_room)
+        if (player.ExistRoomNum < mapMn.max_room)
         {
             for (int p = 0; p < _particleMax; p++)
             {

@@ -4,53 +4,55 @@ using UnityEngine;
 
 public class DungeonInitializer : MonoBehaviour {
 
-    GameObject parent;
-    DungeonPartManager dMn;
-    [SerializeField] GameObject player;
-    MapManager mapMn;
-    EnemyManager enemyMn;
-    OnGroundObjectManager groundObjMn;
-    ObstacleManager obsMn;
-    TutorialManager tutorialMn;
-    int width;
-    int height;
-    [SerializeField] int enemyCount = 5;
+    GameObject				m_oParent;
+    DungeonPartManager		m_cDungeonMgr;
+    [SerializeField]
+	GameObject				player;
+    MapManager				m_cMapMgr;
+    EnemyManager			m_cEnemyMgr;
+    OnGroundObjectManager	m_cOnGroundObjMgr;
+    ObstacleManager			m_cObstacleMgr;
+    TutorialManager			m_cTutorialMgr;
+    int						m_iWidth;
+    int						m_iHeight;
+    [SerializeField]
+	int						enemyCount = 5;
 
-    public int eneCount = 1;
+    public int				eneCount = 1;
 
     // キャラが部屋だけでなく道の上にポップすることを許可するかどうか
-    public bool AllowCharaOnRoad = false;
+    public bool AllowCharaOnRoad		= false;
     // 敵のランダムポップをするかどうか
-    public bool PopRandomEnemys = true;
+    public bool PopRandomEnemys			= true;
     // 特殊床のランダムポップをするかどうか
-    public bool PopRandomGroundObjects = true;
+    public bool PopRandomGroundObjects	= true;
     // 障害物のランダムポップをするかどうか
-    public bool PopRandomObstacles = true;
+    public bool PopRandomObstacles		= true;
 
-    // 難易度調整用
-    // playerCloseEnemyMax + 1匹目以降はプレイヤーから半径 closeRangeMin 以下の場所にはスポーンさせない
-    int playerCloseEnemyMax = 2;
-    float closeRangeMin = 7;
+	// フロア開始時、近くに沸く敵の数を制限する
+    int			m_iPlayerCloseEnemyMax		= 2; // +1匹目以降はプレイヤーから
+	// 半径		
+    float		m_fCloseRangeMin			= 7; // 以下の場所にはスポーンさせない
 
-    // プレイヤー、階段が固定位置に出現する場合の位置
-    public Vector3 fixedPlayerPos = Vector3.one * -1;
+	// プレイヤー、階段が固定位置に出現する場合の位置
+	public Vector3 fixedPlayerPos = Vector3.one * -1;
     public Vector3 fixedStairsPos = Vector3.one * -1;
 
     private void Awake()
     {
-        parent = GameObject.Find("GameObjectParent");
-        dMn = parent.GetComponentInChildren<DungeonPartManager>();
-        mapMn = parent.GetComponentInChildren<MapManager>();
-        width = MapManager.DUNGEON_WIDTH;
-        height = MapManager.DUNGEON_HEIGHT;
+        m_oParent					= GameObject.Find("GameObjectParent");
+        m_cDungeonMgr				= m_oParent.GetComponentInChildren<DungeonPartManager>();
+        m_cMapMgr					= m_oParent.GetComponentInChildren<MapManager>();
+        m_iWidth					= MapManager.DUNGEON_WIDTH;
+        m_iHeight					= MapManager.DUNGEON_HEIGHT;
 
-        enemyMn = parent.GetComponentInChildren<EnemyManager>();
-        enemyMn.d_init = this;
-        groundObjMn = parent.GetComponentInChildren<OnGroundObjectManager>();
-        groundObjMn.d_init = this;
-        obsMn = parent.GetComponentInChildren<ObstacleManager>();
-        obsMn.d_init = this;
-        tutorialMn = parent.GetComponentInChildren<TutorialManager>();
+        m_cEnemyMgr					= m_oParent.GetComponentInChildren<EnemyManager>();
+        m_cEnemyMgr.d_init			= this;
+        m_cOnGroundObjMgr			= m_oParent.GetComponentInChildren<OnGroundObjectManager>();
+        m_cOnGroundObjMgr.d_init	= this;
+        m_cObstacleMgr				= m_oParent.GetComponentInChildren<ObstacleManager>();
+        m_cObstacleMgr.d_init		= this;
+        m_cTutorialMgr				= m_oParent.GetComponentInChildren<TutorialManager>();
     }
 
     public void DungeonDataInit()
@@ -60,7 +62,7 @@ public class DungeonInitializer : MonoBehaviour {
 
         if ( 1 == SaveData.GetInt("IsInterrupt", 0) )
         {
-            enemyMn.LoadEnemys();
+            m_cEnemyMgr.LoadEnemys();
         }
         else if ( PopRandomEnemys )
         {
@@ -70,7 +72,7 @@ public class DungeonInitializer : MonoBehaviour {
             }
             // 確率を満たせばNPCが出現
             int random = Random.Range(0, 100);
-            if ( dMn.floor != 30 && random < 100 )
+            if ( m_cDungeonMgr.floor != 30 && random < 100 )
             {
                 var npc = EnemySet();
                 if (npc) npc.isSpeakable = true;
@@ -83,12 +85,12 @@ public class DungeonInitializer : MonoBehaviour {
         }
 
         // 回復パネル等床オブジェクトの配置
-        if (PopRandomGroundObjects) groundObjMn.Init();
+        if (PopRandomGroundObjects) m_cOnGroundObjMgr.Init();
 
         // 爆弾、岩ブロックなど障害物の配置
-        if (PopRandomObstacles) obsMn.Init();
+        if (PopRandomObstacles) m_cObstacleMgr.Init();
 
-        if ( tutorialMn.IsTutorialON ) enemyMn.NonPatrolMode();
+        if ( m_cTutorialMgr.IsTutorialON ) m_cEnemyMgr.NonPatrolMode();
     }
 
 
@@ -113,14 +115,14 @@ public class DungeonInitializer : MonoBehaviour {
             pos = GetRandomPos();
             charaDir = Calc.RandomDir();
             // キャラの位置を配列に入れて予約（他とかぶらないようにする）
-            mapMn.chara_exist2D[(int)pos.z, (int)pos.x] = 1;
+            m_cMapMgr.chara_exist2D[(int)pos.z, (int)pos.x] = 1;
         }
         else
         {
             // プレイヤーは固定位置
             pos = fixedPlayerPos;
             charaDir = new Vector3(0, 0, 1);
-            mapMn.chara_exist2D[(int)pos.z, (int)pos.x] = 1;
+            m_cMapMgr.chara_exist2D[(int)pos.z, (int)pos.x] = 1;
         }
         player.transform.position = pos;
         Player pl = player.GetComponent<Player>();
@@ -131,7 +133,7 @@ public class DungeonInitializer : MonoBehaviour {
     }
 
     // ランダム位置に敵を配置する場合
-    Enemy EnemySet(EnemyType fixedType = (EnemyType)(-1))
+    Enemy EnemySet(eEnemyType fixedType = (eEnemyType)(-1))
     {
         float sqrPlayerCloseRange = 0;
         Vector3 pos = Vector3.zero;
@@ -148,14 +150,14 @@ public class DungeonInitializer : MonoBehaviour {
                 return null;
             }
             sqrPlayerCloseRange = ( pos - player.transform.position ).sqrMagnitude;
-        } while ( eneCount <= playerCloseEnemyMax && sqrPlayerCloseRange < closeRangeMin * closeRangeMin );
+        } while ( eneCount <= m_iPlayerCloseEnemyMax && sqrPlayerCloseRange < m_fCloseRangeMin * m_fCloseRangeMin );
 
-        var ene = enemyMn.EnemyAdd(pos, fixedType);
+        var ene = m_cEnemyMgr.EnemyAdd(pos, fixedType);
         if ( !ene ) return null;
         if ( (int)fixedType != -1 && ene) ene.type = fixedType;
 
         // キャラの位置を配列に入れて予約（他とかぶらないようにする）
-        mapMn.chara_exist2D[(int)pos.z, (int)pos.x] = ene.idNum;
+        m_cMapMgr.chara_exist2D[(int)pos.z, (int)pos.x] = ene.idNum;
 
         eneCount++;
 
@@ -163,7 +165,7 @@ public class DungeonInitializer : MonoBehaviour {
     }
 
     // 固定位置に敵を配置する場合
-    public Enemy EnemySet(Vector3 fixPos, EnemyType fixedType = (EnemyType)( -1 ))
+    public Enemy EnemySet(Vector3 fixPos, eEnemyType fixedType = (eEnemyType)( -1 ))
     {
         if ( fixPos.x == -1 )
         {
@@ -173,12 +175,12 @@ public class DungeonInitializer : MonoBehaviour {
             return null;
         }
 
-        var ene = enemyMn.EnemyAdd(fixPos, fixedType);
+        var ene = m_cEnemyMgr.EnemyAdd(fixPos, fixedType);
         if ( !ene ) return null;
         if ( (int)fixedType != -1 && ene ) ene.type = fixedType;
 
         // キャラの位置を配列に入れて予約（他とかぶらないようにする）
-        mapMn.chara_exist2D[(int)fixPos.z, (int)fixPos.x] = ene.idNum;
+        m_cMapMgr.chara_exist2D[(int)fixPos.z, (int)fixPos.x] = ene.idNum;
 
         eneCount++;
         return ene;
@@ -213,17 +215,17 @@ public class DungeonInitializer : MonoBehaviour {
 
     public Vector3 GetRandomPos()
     {
-        int px = Random.Range(0, width);
-        int pz = Random.Range(0, height);
+        int px = Random.Range(0, m_iWidth);
+        int pz = Random.Range(0, m_iHeight);
         int attempt = 0;
 
-        while (mapMn.IsWall(new Vector3(px,0,pz)) //壁である 
-            || (!AllowCharaOnRoad && mapMn.GetDungeonInfo(px, pz) >= mapMn.max_room )  // 通路である
-            || mapMn.chara_exist2D[pz,px] != -1  //既にキャラが存在する
-            || mapMn.onground_exist2D[pz,px] != -1) //既に床オブジェクトが存在する
+        while (m_cMapMgr.IsWall(new Vector3(px,0,pz)) //壁である 
+            || (!AllowCharaOnRoad && m_cMapMgr.GetDungeonInfo(px, pz) >= m_cMapMgr.max_room )  // 通路である
+            || m_cMapMgr.chara_exist2D[pz,px] != -1  //既にキャラが存在する
+            || m_cMapMgr.onground_exist2D[pz,px] != -1) //既に床オブジェクトが存在する
         {
-            px = Random.Range(0, width);
-            pz = Random.Range(0, height);
+            px = Random.Range(0, m_iWidth);
+            pz = Random.Range(0, m_iHeight);
             attempt++;
             if ( attempt >= 30 )
             {

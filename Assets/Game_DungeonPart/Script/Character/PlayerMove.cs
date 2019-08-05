@@ -108,7 +108,7 @@ public class PlayerMove : MonoBehaviour
 
         if ( turnMn.PlayerActionSelected ) return true;
 
-        if ( player.abnoState.invincibleTurn > 0 ) return false;
+        if ( player.m_cAbnoState.GetTurn(AbnoStateType.Invincible) > 0 ) return false;
 
         // 選択方向を向く
         player.charaDir = dir;

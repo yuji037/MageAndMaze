@@ -7,6 +7,6 @@ public class IceGuard : StraightShot {
     public override void OnDecided()
     {
         base.OnDecided();
-        player.abnoState.invincibleTurn = Mathf.FloorToInt(abnoEffectPower);
+        player.m_cAbnoState.SetTurn(AbnoStateType.Invincible, abnoEffectPower);
     }
 }

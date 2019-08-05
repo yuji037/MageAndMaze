@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum EnemyType
+public enum eEnemyType
 {
     NORMAL,
     ARCHER,
@@ -19,7 +19,7 @@ public class Enemy : BattleParticipant
 {
     // エネミーのステータス、状態異常、行動選択を管理
 
-    public EnemyType type = 0;
+    public eEnemyType type = 0;
     public bool isSpeakable = false;
     AImove thisAImove = null;
     protected List<GameObject> myBodys = new List<GameObject>();
@@ -66,7 +66,7 @@ public class Enemy : BattleParticipant
 
         spAI = GetComponent<SpecialActAI>();
         if ( spAI ) spAI.Init();
-        if ( type == EnemyType.SWORD )
+        if ( type == eEnemyType.SWORD )
         {
             needActGauge = 0.5f;
         }
@@ -82,17 +82,17 @@ public class Enemy : BattleParticipant
     {
         float plusActionGauge = 1;
         // プレイヤー倍速時
-        if ( player.abnoState.spdUpTurn > 0 ) plusActionGauge = 0.5f;
+        if ( player.m_cAbnoState.GetTurn(AbnoStateType.SpdUp) > 0 ) plusActionGauge = 0.5f;
 
         actionGauge += plusActionGauge;
 
         // 行動選択に影響を及ぼす状態異常の処理
-        if ( abnoState.freezeTurn > 0 )
+        if ( m_cAbnoState.GetTurn(AbnoStateType.Freeze) > 0 )
         {
             actionGauge = 0;
             return;
         }
-        if ( abnoState.paralizeTurn > 0 )
+        if ( m_cAbnoState.GetTurn(AbnoStateType.Paralize) > 0 )
         {
             actionGauge -= 0.5f;
         }
@@ -278,41 +278,40 @@ public class Enemy : BattleParticipant
                 break;
         }
     }
-    public override void UpdateAbnoEffect()
+
+	public override void UpdateAbnoEffect()
+	{
+		for ( int i = 0; i < (int)AbnoStateType.MAX; ++i )
+		{
+			// 状態異常エフェクトの更新
+			if ( m_cAbnoState.m_fRemainTurns[i] > 0 && m_poAbnoEffects[i] == null )
+			{
+				var oEffectPrefab = parent.GetComponentInChildren<AbnormalEffect>().abnoEffect[i];
+				if ( oEffectPrefab == null ) continue;
+
+				m_poAbnoEffects[i] = Instantiate(oEffectPrefab);
+				m_poAbnoEffects[i].transform.position	= this.transform.position;
+				m_poAbnoEffects[i].transform.parent		= this.transform;
+				Debug.Log(( (AbnoStateType)i ).ToString() + "!");
+			}
+			if ( m_cAbnoState.m_fRemainTurns[i] <= 0 )
+			{
+				if ( m_poAbnoEffects[i] ) Destroy(m_poAbnoEffects[i]);
+			}
+		}
+	}
+
+	public override void UpdateAbnoParam()
     {
-        // 凍結
-        if ( abnoState.freezeTurn > 0 && abnoEffect[0] == null )
-        {
-            abnoEffect[0] = Instantiate(parent.GetComponentInChildren<AbnormalEffect>().abnoEffect[0]);
-            abnoEffect[0].transform.position = this.transform.position;
-            abnoEffect[0].transform.parent = this.transform;
-            Debug.Log("Freeze!");
-        }
-        if ( abnoState.freezeTurn <= 0 )
-        {
-            if ( abnoEffect[0] ) Destroy(abnoEffect[0]);
-        }
+		for ( int i = 0; i < (int)AbnoStateType.MAX; ++i )
+		{
+			if ( m_cAbnoState.m_fRemainTurns[i] > 0 ) m_cAbnoState.m_fRemainTurns[i] -= 1f;
+		}
 
-        // 感電
-        if ( abnoState.paralizeTurn > 0 && abnoEffect[1] == null )
-        {
-            abnoEffect[1] = Instantiate(parent.GetComponentInChildren<AbnormalEffect>().abnoEffect[1]);
-            abnoEffect[1].transform.position = this.transform.position;
-            abnoEffect[1].transform.parent = this.transform;
-            Debug.Log("Paralize!");
-        }
-        if ( abnoState.paralizeTurn <= 0 )
-        {
-            if ( abnoEffect[1] ) Destroy(abnoEffect[1]);
-        }
-    }
+		//if ( abnoState.freezeTurn > 0 ) abnoState.freezeTurn--;
 
-    public override void UpdateAbnoParam()
-    {
-        if ( abnoState.freezeTurn > 0 ) abnoState.freezeTurn--;
-
-        if ( abnoState.paralizeTurn > 0 ) abnoState.paralizeTurn--;
-    }
+		//if ( abnoState.paralizeTurn > 0 ) abnoState.paralizeTurn--;
+	}
 
     protected override void DeathCheck(bool emitDeathEffect = true)
     {
@@ -342,14 +341,14 @@ public class Enemy : BattleParticipant
 
     void KillReward()
     {
-        if ( type == EnemyType.LIGHT ) return;
+        if ( type == eEnemyType.LIGHT ) return;
 
         Player player = parent.GetComponentInChildren<Player>();
         player.ExpGet(RewardExp);
         ItemGet itemGet = parent.GetComponentInChildren<ItemGet>();
 
         float plus = 1 + (dMn.floor / 6.0f);
-        if ( type == EnemyType.TREASURE ) plus *= 10;
+        if ( type == eEnemyType.TREASURE ) plus *= 10;
 
         itemGet.AcquireSoulStone(0, plus);
         itemGet.AcquireSoulStone(1, plus);

@@ -29,10 +29,10 @@ public class RunAwayMove : AImove
 
         if (!findedPlayer)
         {
-            if (targetChara.existRoomNum >= 0 && targetChara.existRoomNum < mapMn.max_room) // ターゲットが部屋に居る
+            if (targetChara.ExistRoomNum >= 0 && targetChara.ExistRoomNum < mapMn.max_room) // ターゲットが部屋に居る
             {
-                findedPlayer = (targetChara.existRoomNum == thisChara.existRoomNum); // プレイヤーと同部屋にいれば発見
-                if (!findedPlayer && thisChara.existRoomNum >= mapMn.max_room)
+                findedPlayer = (targetChara.ExistRoomNum == thisChara.ExistRoomNum); // プレイヤーと同部屋にいれば発見
+                if (!findedPlayer && thisChara.ExistRoomNum >= mapMn.max_room)
                 {
                     int d_x = Mathf.Abs((int)(targetChara.sPos.x - thisChara.pos.x));
                     int d_z = Mathf.Abs((int)(targetChara.sPos.z - thisChara.pos.z));
@@ -61,10 +61,10 @@ public class RunAwayMove : AImove
                 targetPos.x = -1;   // ←NULLとして扱う
             }
             // 目標地点NULL かつ 敵自身が部屋に居る場合
-            if (targetPos.x == -1 && thisChara.existRoomNum >= 0 && thisChara.existRoomNum < mapMn.max_room)
+            if (targetPos.x == -1 && thisChara.ExistRoomNum >= 0 && thisChara.ExistRoomNum < mapMn.max_room)
             {
                 // 一番遠い出入り口を目標地点に登録
-                Vector3[] gatewayPos = mapMn.room_info[thisChara.existRoomNum].gatewayPos;
+                Vector3[] gatewayPos = mapMn.room_info[thisChara.ExistRoomNum].gatewayPos;
                 float maxDis = 0;
                 int maxNum = 0;
                 for (int i = 0; i < gatewayPos.Length; i++)

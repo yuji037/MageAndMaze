@@ -40,17 +40,17 @@ public class TurnManager : MonoBehaviour {
 
     private void Awake()
     {
-        GameObject parent = GameObject.Find("GameObjectParent");
-        player = parent.GetComponentInChildren<Player>();
-        playerMove = parent.GetComponentInChildren<PlayerMove>();
-        eneMn = parent.GetComponentInChildren<EnemyManager>();
-        miniMap = parent.GetComponentInChildren<UIMiniMap>();
-        mapMn = parent.GetComponentInChildren<MapManager>();
-        obsMn = parent.GetComponentInChildren<ObstacleManager>();
-        ogoMn = parent.GetComponentInChildren<OnGroundObjectManager>();
-        inactiveFarMn = parent.GetComponentInChildren<InactiveFarManager>();
-        tutorialMn = parent.GetComponentInChildren<TutorialManager>();
-        turnTable = new List<ActionData>();
+        GameObject oParent	= GameObject.Find("GameObjectParent");
+        player				= oParent.GetComponentInChildren<Player>();
+        playerMove			= oParent.GetComponentInChildren<PlayerMove>();
+        eneMn				= oParent.GetComponentInChildren<EnemyManager>();
+        miniMap				= oParent.GetComponentInChildren<UIMiniMap>();
+        mapMn				= oParent.GetComponentInChildren<MapManager>();
+        obsMn				= oParent.GetComponentInChildren<ObstacleManager>();
+        ogoMn				= oParent.GetComponentInChildren<OnGroundObjectManager>();
+        inactiveFarMn		= oParent.GetComponentInChildren<InactiveFarManager>();
+        tutorialMn			= oParent.GetComponentInChildren<TutorialManager>();
+        turnTable			= new List<ActionData>();
     }
 
     public void PlayerActSelect()
@@ -62,8 +62,8 @@ public class TurnManager : MonoBehaviour {
         // ステージボスがいる場合はボスを検出
         foreach(Enemy enemy in eneMn.enemys )
         {
-            var _boss = enemy.gameObject.GetComponent<StageBoss>();
-            if ( _boss ) boss = enemy;
+            var		_boss = enemy.gameObject.GetComponent<StageBoss>();
+            if (	_boss ) boss = enemy;
         }
 
         eneMn.EnemyActionSelect();
@@ -94,8 +94,8 @@ public class TurnManager : MonoBehaviour {
                 // 今アクション「移動」
                 // 次アクション「移動」
                 // なら次も行動可
-                if ( turnTable[turnActNum].actType == ActionType.MOVE
-                    && turnTable[turnActNum + 1].actType == ActionType.MOVE )
+                if (		turnTable[turnActNum	].actType == ActionType.MOVE
+                    &&		turnTable[turnActNum + 1].actType == ActionType.MOVE )
                 {
                     ++turnActNum;
                     continue;
@@ -103,8 +103,8 @@ public class TurnManager : MonoBehaviour {
                 // 今アクション「移動」
                 // 次アクション「移動じゃない」
                 // なら今アクションが完了したら次が行動可
-                else if ( turnTable[turnActNum].actType == ActionType.MOVE
-                    && turnTable[turnActNum + 1].actType != ActionType.MOVE )
+                else if (	turnTable[turnActNum	].actType == ActionType.MOVE
+                    &&		turnTable[turnActNum + 1].actType != ActionType.MOVE )
                 {
                     if ( turnTable[turnActNum].finish )
                     {
@@ -114,7 +114,7 @@ public class TurnManager : MonoBehaviour {
                 }
                 // 今アクション「移動じゃない」
                 // なら今アクションが完了したら次が行動可
-                else if ( turnTable[turnActNum].actType != ActionType.MOVE )
+                else if (	turnTable[turnActNum].actType != ActionType.MOVE )
                 {
                     if ( turnTable[turnActNum].finish )
                     {
@@ -126,14 +126,14 @@ public class TurnManager : MonoBehaviour {
                 // 今アクションがプレイヤーから遠かったら演出を省略
                 // 次アクションが移動だったら行動可とする、または、
                 // 次アクションが省略だったら行動可とする
-                else if ( !turnTable[turnActNum].actChara.isPlayPerformance )
+                else if (	false == turnTable[	turnActNum		].actChara.isPlayPerformance )
                 {
                     if ( turnTable[turnActNum + 1].actType == ActionType.MOVE )
                     {
                         ++turnActNum;
                         continue;
                     }
-                    if ( !turnTable[turnActNum + 1].actChara.isPlayPerformance )
+                    if (	false == turnTable[	turnActNum + 1	].actChara.isPlayPerformance )
                     {
                         ++turnActNum;
                         continue;

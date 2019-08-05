@@ -66,7 +66,7 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    public void Spawn(bool raiseStrength, EnemyType fixedType = (EnemyType)(-1), bool isFarFromPlayer = true)
+    public void Spawn(bool raiseStrength, eEnemyType fixedType = (eEnemyType)(-1), bool isFarFromPlayer = true)
     {
         // プレイヤーに近すぎない位置をランダムに決定
         Vector3 pos;
@@ -158,7 +158,7 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    public Enemy EnemyAdd(Vector3 posi, EnemyType fixedType = (EnemyType)(-1))
+    public Enemy EnemyAdd(Vector3 posi, eEnemyType fixedType = (eEnemyType)(-1))
     {
         if ( posi.x < 0 ) return null;
         if ( spawnTable == null )
@@ -177,7 +177,7 @@ public class EnemyManager : MonoBehaviour
 
         GameObject newEnemyObj;
         // 敵の種類選択
-        if( fixedType != (EnemyType)( -1 ) )
+        if( fixedType != (eEnemyType)( -1 ) )
         {
             newEnemyObj = Instantiate(enemyPrefab[(int)fixedType], characterParent.transform);
         }
@@ -219,7 +219,7 @@ public class EnemyManager : MonoBehaviour
         enemys.Add(newEne);
         newEne.Init();
 
-        if (fixedType != EnemyType.BOSS1) SetStrength(newEne);
+        if (fixedType != eEnemyType.BOSS1) SetStrength(newEne);
 
         return newEne;
     }
@@ -334,7 +334,7 @@ public class EnemyManager : MonoBehaviour
     {
         for ( int i = enemys.Count - 1; i >= 0; i-- )
         {
-            if ( enemys[i].type == EnemyType.BOSS1 ) continue;
+            if ( enemys[i].type == eEnemyType.BOSS1 ) continue;
 
             if ( !enemys[i].IsAlive )
             {
@@ -349,7 +349,7 @@ public class EnemyManager : MonoBehaviour
     [System.Serializable]
     public class SavebleEnemyData
     {
-        public EnemyType type;
+        public eEnemyType type;
         public int HP;
         public int MaxHP;
         public float NormalPower;
@@ -359,7 +359,7 @@ public class EnemyManager : MonoBehaviour
 
         public SavebleEnemyData()
         {
-            type = EnemyType.NORMAL;
+            type = eEnemyType.NORMAL;
             HP = 15;
             MaxHP = 15;
             NormalPower = 2;
@@ -419,7 +419,7 @@ public class EnemyManager : MonoBehaviour
 
             GameObject newEnemyObj;
             // 敵の種類選択
-            EnemyType type = data.type;
+            eEnemyType type = data.type;
 
             if ( type >= 0 )
             {

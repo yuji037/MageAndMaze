@@ -25,7 +25,7 @@ public class GhostRandomMove : AImove {
         targetChara = parent.GetComponentInChildren<Player>();
         foreach (Enemy ene in eneMn.enemys)
         {
-            if (ene.type == EnemyType.LIGHT)
+            if (ene.type == eEnemyType.LIGHT)
             {
                 // 光るモンスターが近いならそっちをターゲットする
                 int d_x = Mathf.Abs((int)(ene.pos.x - thisChara.pos.x));
@@ -39,9 +39,9 @@ public class GhostRandomMove : AImove {
                     }
                 }
                 // 光るモンスターが同じ部屋にいるならそっちをターゲットする
-                if (0 <= thisChara.existRoomNum && thisChara.existRoomNum <= mapMn.max_room)
+                if (0 <= thisChara.ExistRoomNum && thisChara.ExistRoomNum <= mapMn.max_room)
                 {
-                    if (ene.existRoomNum == thisChara.existRoomNum)
+                    if (ene.ExistRoomNum == thisChara.ExistRoomNum)
                     {
                         targetChara = ene;
                         break;

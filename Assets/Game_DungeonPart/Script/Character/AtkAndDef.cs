@@ -52,7 +52,7 @@ public class AtkAndDef : MonoBehaviour {
     public float CalcPower(SkillBase.TYPE type, float row_power)
     {
         float _powerF = row_power;
-        if (thisChara.abnoState.atkUpTurn > 0 )
+        if (thisChara.m_cAbnoState.GetTurn(AbnoStateType.AtkUp) > 0 )
         {
             _powerF *= 2.0f;
         }
@@ -85,11 +85,11 @@ public class AtkAndDef : MonoBehaviour {
     public int CalcDamage(SkillBase.TYPE type, float row_damage)
     {
         float _damageF = row_damage;
-        if ( thisChara.abnoState.defUpTurn > 0 )
+        if ( thisChara.m_cAbnoState.GetTurn(AbnoStateType.DefUp) > 0 )
         {
             _damageF *= 0.5f;
         }
-        if (thisChara.abnoState.invincibleTurn > 0 )
+        if (thisChara.m_cAbnoState.GetTurn(AbnoStateType.Invincible) > 0 )
         {
             _damageF = 0;
         }
@@ -123,7 +123,7 @@ public class AtkAndDef : MonoBehaviour {
         return (int)Mathf.Round(_damageF);
     }
 
-    public int CalcAbnormalTurn(AbnormalStateType type, float effectValue)
+    public float CalcAbnormalTurn(AbnormalStateType type, float effectValue)
     {
         switch ( type )
         {
@@ -134,7 +134,7 @@ public class AtkAndDef : MonoBehaviour {
                 effectValue *= paralize_resist;
                 break;
         }
-        return Mathf.FloorToInt(effectValue);
+        return effectValue;
     }
     
     [System.Serializable]

@@ -39,20 +39,20 @@ public class PlayerItemUse : MonoBehaviour {
         switch ( ID )
         {
             case 100:
-                player.abnoState.atkUpTurn = 30;
+                player.m_cAbnoState.SetTurn(AbnoStateType.AtkUp, 30f);
                 break;
             case 101:
-                player.abnoState.defUpTurn = 30;
-                break;
+                player.m_cAbnoState.SetTurn(AbnoStateType.DefUp, 30f);
+				break;
             case 102:
-                player.abnoState.spdUpTurn = 30;
-                break;
+                player.m_cAbnoState.SetTurn(AbnoStateType.SpdUp, 30f);
+				break;
             case 103:
                 player.HealByPercent(0.7f);
                 break;
             case 104:
-                player.abnoState.transparentTurn = 15;
-                break;
+                player.m_cAbnoState.SetTurn(AbnoStateType.Transparent, 15f);
+				break;
             case 105:
                 revealedMap.canAllEnemySearch = true;
 
